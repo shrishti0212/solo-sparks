@@ -21,22 +21,24 @@ const app = express();
 
 const PORT = process.env.PORT || 5000;
 
-
-const allowedOrigins = [
-  'http://localhost:3000',
-  'https://solo-sparks-phi.vercel.app'
-];
-
-app.use(cors({
+const corsOptions = {
   origin: function (origin, callback) {
+    const allowedOrigins = [
+      "http://localhost:3000",
+      "https://solo-sparks-phi.vercel.app"
+    ];
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error("Not allowed by CORS"));
     }
   },
-  credentials: true
-}));
+  credentials: true,
+  methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+};
+
+app.use(cors(corsOptions));
 
 
 app.use(express.json());
