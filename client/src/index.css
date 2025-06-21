@@ -2,5 +2,5 @@
 @tailwind components;
 @tailwind utilities;
 body {
-  @apply bg-[#A18AFF] min-h-screen;
+  @apply bg-gradient-to-br from-[#8576FF] to-[#B8B5FF] min-h-screen;
 }

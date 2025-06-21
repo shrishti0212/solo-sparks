@@ -1,77 +1,87 @@
 import { useState } from "react";
 import axios from "../api/axios";
 import { useNavigate } from "react-router-dom";
-import {useDispatch} from "react-redux"
+import { useDispatch } from "react-redux";
 import { setUser } from "../utils/userSlice";
 
-
-const Login = () =>{
+const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isRegister, setIsRegister] = useState(false);
   const [formData, setFormData] = useState({
-    name:"",
-    email:"",
-    password:""
+    name: "",
+    email: "",
+    password: ""
+  });
 
-  })
-
-  const [error, setError ] = useState("");
+  const [error, setError] = useState("");
 
   const toggleForm = () => setIsRegister(!isRegister);
 
-  const handleChange = (e) =>{
-    setFormData({...formData, [e.target.name]: e.target.value })
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async(e) =>{
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    try{
+    try {
       const url = isRegister ? "/auth/register" : "/auth/login";
-      const payload = isRegister ? { name: formData.name, email:formData.email , password : formData.password} : { email: formData.email, password :formData.password};
+      const payload = isRegister
+        ? {
+            name: formData.name,
+            email: formData.email,
+            password: formData.password
+          }
+        : {
+            email: formData.email,
+            password: formData.password
+          };
 
-      const res= await axios.post(url, payload);
+      const res = await axios.post(url, payload);
 
-      dispatch(setUser(res.data.user)); 
-      localStorage.setItem("token",res.data.token); 
+      dispatch(setUser(res.data.user));
+      localStorage.setItem("token", res.data.token);
 
-      console.log(res.data);
-      alert(`${isRegister ? "Registered": "Logged in"} successfully`);
-      navigate("/")
-
-    }catch(err){
+      alert(`${isRegister ? "Registered" : "Logged in"} successfully`);
+      navigate("/");
+    } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#A18AFF]">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-4 text-center">
-          {isRegister? "Register" : "Login"}
-        </h2>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#8576FF] to-[#B8B5FF] px-6">
+      
+      <h2 className="text-6xl font-bold mb-16 text-center text-[#8474ff]">
+        {isRegister ? "Register" : "Login"}
+      </h2>
 
+      
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col w-full max-w-xl space-y-6"
+      >
         {isRegister && (
-          <input 
-            type="text" 
-            name="name" 
-            placeholder="Name" 
-            onChange={handleChange} 
-            value={formData.name} 
-            className="w-full p-2 mb-4 border rounded" 
+          <input
+            type="text"
+            name="name"
+            placeholder="Name"
+            onChange={handleChange}
+            value={formData.name}
+            className="w-full bg-white bg-opacity-20 px-5 py-4 rounded-lg font-semibold text-lg text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
             required
           />
         )}
 
-         <input
+        <input
           type="email"
           name="email"
           placeholder="Email"
           onChange={handleChange}
           value={formData.email}
-          className="w-full p-2 mb-4 border rounded"
+          className="w-full bg-white bg-opacity-20 px-5 py-4 rounded-lg font-semibold text-lg text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
           required
         />
 
@@ -81,28 +91,31 @@ const Login = () =>{
           placeholder="Password"
           onChange={handleChange}
           value={formData.password}
-          className="w-full p-2 mb-4 border rounded"
+          className="w-full bg-white bg-opacity-20 px-5 py-4 rounded-lg font-semibold text-lg text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
           required
         />
 
-        {error && <p className=" text-red-600">{error}</p>}
-          
-        <button 
-            type="submit" 
-            className="w-full bg-purple-600 text-white p-2 rounded hover:bg-purple-700 transition">
-            {isRegister? "SignUp":"Login"}
-        </button> 
+        {error && <p className="text-red-200 text-sm">{error}</p>}
 
-          <p className="mt-4 text-sm text-center">
-            {isRegister ? "Already have an account?":"Don't have an account"}
-            {" "}
-            <span className="text-[#A18AFF] cursor-pointer" onClick={toggleForm}>
-              {isRegister?"Login":"Register"}
-            </span>
-          </p>
+        <button
+          type="submit"
+          className="w-full bg-white/90 py-4 rounded-lg text-xl text-[#8474ff] font-bold hover:bg-opacity-75 transition"
+        >
+          {isRegister ? "Sign Up" : "Login"}
+        </button>
+
+        <p className="text-white/90 text-center text-base">
+          {isRegister ? "Already have an account?" : "Don't have an account?"}{" "}
+          <span
+            className="text-[#fff] underline font-semibold cursor-pointer"
+            onClick={toggleForm}
+          >
+            {isRegister ? "Login" : "Register"}
+          </span>
+        </p>
       </form>
     </div>
-  )
-}
+  );
+};
 
 export default Login;

@@ -15,13 +15,11 @@ const Home = () => {
     const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
     setDate(today.toLocaleDateString("en-US", options));
 
-    // Fetch latest quest
     const fetchQuest = async () => {
       try {
         const res = await API.get("/quests");
         const sorted = res.data.quests.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setLatestQuest(sorted[0]);
-
       } catch (err) {
         console.error("Error fetching latest quest:", err);
       }
@@ -31,64 +29,73 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#A18AFF] text-white p-6 relative">
+    <div className="min-h-screen text-white/90 p-6 relative bg-gradient-to-br from-[#8576FF] to-[#B8B5FF]">
       
-      <h2 className="text-xl text-center italic mb-4">“{quote}”</h2>
+      {/* TODAY SECTION */}
+      <h1 className="text-3xl font-bold uppercase font-[Roboto]">Today</h1>
+      <p className="text-sm font-semibold text-[#e2e1fb] font-[Roboto] mb-6">{date}</p>
 
-      
-      <h1 className="text-3xl font-bold">Today</h1>
-      <p className="mb-6 text-sm text-white/80">{date}</p>
-
-      
-      <div
-        onClick={() => navigate("/mood-checkin")}
-        className="bg-white text-black rounded-xl p-4 mb-6 shadow cursor-pointer"
-      >
-        <h3 className="text-lg font-semibold">🧠 Daily Check-In</h3>
-        <p className="text-sm text-gray-600">Log how you're feeling today</p>
+      {/* QUOTE BELOW DATE */}
+      <div className="bg-white/20 backdrop-blur-sm text-white rounded-2xl p-5 mb-10 shadow-md font-[Roboto] italic text-center">
+        “{quote}”
       </div>
 
-      
+      {/* DAILY CHECK-IN */}
+      <div
+        onClick={() => navigate("/mood-checkin")}
+        className="bg-white/20 backdrop-blur-sm text-white rounded-2xl p-8 mb-8 shadow-md hover:shadow-lg transition cursor-pointer"
+      >
+        <h3 className="text-lg font-semibold uppercase font-[Roboto] text-white mb-2">
+          🧠 Daily Check-In
+        </h3>
+        <p className="text-sm text-white/80">Log how you're feeling today</p>
+      </div>
+
+      {/* LATEST QUEST */}
       {latestQuest && (
         <div
           onClick={() => navigate("/quests")}
-          className="bg-white text-black rounded-xl p-4 shadow cursor-pointer"
+          className="bg-white/20 backdrop-blur-sm text-white rounded-2xl p-8 mb-8 shadow-md hover:shadow-lg transition cursor-pointer"
         >
-          <h3 className="text-lg font-semibold">🧩 Your Latest Quest</h3>
-          <p className="text-sm mt-1">{latestQuest.title}</p>
+          <h3 className="text-lg font-semibold uppercase font-[Roboto] mb-2">
+            🧩 Your Latest Quest
+          </h3>
+          <p className="text-sm text-white/80">{latestQuest.title}</p>
         </div>
       )}
 
-      
-      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2">
+      {/* FLOATING ACTION BUTTONS */}
+      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
         <div className="relative">
           
           {isExpanded && (
-            <div className="absolute bottom-16 flex flex-col gap-3 items-center">
+            <div className="absolute bottom-16 flex flex-col gap-4 items-center">
               <button
                 onClick={() => navigate("/mood-checkin")}
-                className="bg-purple-700 text-white p-3 rounded-full shadow-lg"
+                className="bg-[#8576FF] text-white w-14 h-14 rounded-md shadow-xl hover:bg-[#786fbd] transition flex items-center justify-center"
+
               >
                 <FaSmile />
               </button>
               <button
                 onClick={() => navigate("/upload/audio")}
-                className="bg-purple-700 text-white p-3 rounded-full shadow-lg"
+                className="bg-[#8576FF] text-white w-14 h-14 rounded-md shadow-xl hover:bg-[#786fbd] transition flex items-center justify-center"
+
               >
                 <FaMicrophone />
               </button>
               <button
                 onClick={() => navigate("/upload/photo")}
-                className="bg-purple-700 text-white p-3 rounded-full shadow-lg"
+                className="bg-[#8576FF] text-white w-14 h-14 rounded-md shadow-xl hover:bg-[#786fbd] transition flex items-center justify-center"
+
               >
                 <FaImage />
               </button>
             </div>
           )}
 
-          
           <button
-            className="bg-white text-purple-700 text-2xl p-4 rounded-full shadow-xl"
+            className="bg-white text-[#8576FF] text-2xl w-14 h-14 rounded-md shadow-xl hover:bg-[#f0f0ff] transition flex items-center justify-center"
             onClick={() => setIsExpanded((prev) => !prev)}
           >
             {isExpanded ? <FaTimes /> : <FaPlus />}

@@ -8,6 +8,9 @@ const Quests = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingQuest, setEditingQuest] = useState(null);
+  const [reflectionsCount, setReflectionsCount] = useState(0);
+  const [photoCount, setPhotoCount] = useState(0);
+  const [sparkPoints, setSparkPoints] = useState(0);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -36,6 +39,19 @@ const Quests = () => {
           })
         );
 
+        let totalReflections = 0;
+        let totalPhotos = 0;
+        withExtras.forEach((q) => {
+          totalReflections += q.reflections.length;
+          totalPhotos += q.reflections.filter((r) => r.image).length;
+        });
+
+        const sparkRes = await API.get(`/spark-points/${currentUser._id}`);
+
+        setReflectionsCount(totalReflections);
+        setPhotoCount(totalPhotos);
+        setSparkPoints(sparkRes.data.totalPoints || 0);
+
         setQuests(withExtras);
         setLoading(false);
       } catch (error) {
@@ -44,7 +60,7 @@ const Quests = () => {
     };
 
     fetchData();
-  }, []);
+  }, [currentUser]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -102,84 +118,94 @@ const Quests = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#A18AFF] p-6 text-white relative">
-      <h2 className="text-2xl font-bold mb-4">Your Quests</h2>
+    <div className="min-h-screen bg-gradient-to-br from-[#8576FF] to-[#B8B5FF] p-4 text-sm text-white">
+      <div className="bg-[#eeedfc] p-6 rounded-2xl mb-6 mt-5">
+        <div className="flex flex-col sm:flex-row justify-between text-center gap-6 sm:gap-0">
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-[#585192]">Reflections</p>
+            <p className="text-2xl font-bold  text-[#585192] mt-1">{reflectionsCount}</p>
+        </div>
+
+        <div className="flex-1">
+          <p className="text-sm font-semibold text-[#585192]">Photos</p>
+          <p className="text-2xl font-bold text-[#585192] mt-1">{photoCount}</p>
+        </div>
+
+        <div className="flex-1">
+          <p className="text-sm font-semibold text-[#585192]">Points</p>
+          <p className="text-2xl font-bold  text-[#585192] mt-1">{sparkPoints}</p>
+        </div>
+      </div>
+    </div>
+
 
       {loading ? (
         <p>Loading quests...</p>
       ) : (
-        <div className="space-y-4">
-          {quests.map((quest) => {
-            const formattedDate = dayjs(quest.createdAt).format("dddd, MMM D");
+        quests.map((quest) => {
+          const formattedDate = dayjs(quest.createdAt).format("dddd, MMM D");
+          return (
+            <div key={quest._id} className="mb-6">
+              <h3 className="text-lg font-bold mb-2 mt-10">{formattedDate}</h3>
 
-            return (
-              <div key={quest._id} className="bg-white text-black p-4 rounded-lg shadow">
-                <div className="flex justify-between items-center mb-2">
-                  <div className="text-purple-700 font-semibold">{formattedDate}</div>
-                  {quest.mood && (
-                    <span className="text-sm bg-purple-100 text-purple-700 px-3 py-1 rounded-full">
-                      Mood: {quest.mood.mood}
-                    </span>
-                  )}
+              <div className="flex flex-col md:flex-row gap-2 text-sm ">
+                
+                {/* Audio and Reflection Section */}
+                <div className="flex-2 bg-white/10 p-4 rounded-xl">
+                  {quest.reflections.map((ref, i) => (
+                    <div key={i} className="mb-3">
+                      {ref.audio && (
+                        <audio controls className="w-1/2 mb-1">
+                          <source src={ref.audio} type="audio/mpeg" />
+                        </audio>
+                      )}
+                      {ref.text && (
+                        <p className="italic text-white/80 text-xs">"{ref.text}"</p>
+                      )}
+                    </div>
+                  ))}
                 </div>
 
-                {quest.reflections.length > 0 && (
-                  <div className="mb-3">
-                    {quest.reflections.map((ref, i) => (
-                      <div key={i} className="mb-2">
-                        {ref.audio && (
-                          <audio controls className="w-full mb-1">
-                            <source src={ref.audio} type="audio/mpeg" />
-                          </audio>
-                        )}
-                        {ref.image && (
-                          <img src={ref.image} alt="Reflection" className="rounded mb-1" />
-                        )}
-                        {ref.text && (
-                          <p className="text-sm italic text-gray-700">"{ref.text}"</p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                <h3 className="text-lg font-bold">{quest.title}</h3>
-                <p>{quest.description}</p>
-                <p className="text-sm mt-1">Type: {quest.type}</p>
-                <p
-                  className={`text-sm font-bold mt-1 ${
+                {/* Quest Section */}
+                <div className="flex-1 bg-white text-black p-4 rounded-xl shadow">
+                  <h4 className="font-bold text-base mb-1">{quest.title}</h4>
+                  <p className="text-xs mb-1">{quest.description}</p>
+                  <p className="text-xs mb-1">Type: {quest.type}</p>
+                  <p className={`text-xs font-bold mb-2 ${
                     quest.status === "done" ? "text-green-600" : "text-yellow-600"
-                  }`}
-                >
-                  Status: {quest.status}
-                </p>
-
-                <div className="mt-3 flex gap-2">
-                  {quest.status !== "done" && (
-                    <button
-                      onClick={() => markAsDone(quest._id)}
-                      className="bg-green-600 text-white px-3 py-1 rounded"
-                    >
-                      Done
+                  }`}>
+                    Status: {quest.status}
+                  </p>
+                  <div className="flex gap-2">
+                    {quest.status !== "done" && (
+                      <button onClick={() => markAsDone(quest._id)} className="bg-green-600 text-white px-2 py-1 rounded text-xs">
+                        Done
+                      </button>
+                    )}
+                    <button onClick={() => handleEdit(quest)} className="bg-blue-600 text-white px-2 py-1 rounded text-xs">
+                      Edit
                     </button>
-                  )}
-                  <button
-                    onClick={() => handleEdit(quest)}
-                    className="bg-blue-600 text-white px-3 py-1 rounded"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => deleteQuest(quest._id)}
-                    className="bg-red-600 text-white px-3 py-1 rounded"
-                  >
-                    Delete
-                  </button>
+                    <button onClick={() => deleteQuest(quest._id)} className="bg-red-600 text-white px-2 py-1 rounded text-xs">
+                      Delete
+                    </button>
+                  </div>
+                </div>
+
+                {/* Image Section */}
+                <div className="flex-1 bg-white/10 p-4 rounded-xl">
+                  {quest.reflections.filter((r) => r.image).map((ref, i) => (
+                    <img
+                      key={i}
+                      src={ref.image}
+                      alt="Reflection"
+                      className="rounded mb-2 max-h-40 object-cover w-full"
+                    />
+                  ))}
                 </div>
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })
       )}
 
       <button

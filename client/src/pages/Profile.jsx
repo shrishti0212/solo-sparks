@@ -48,7 +48,7 @@ const Profile = () => {
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
         <button
           onClick={() => navigate("/dashboard")}
-          className="bg-white rounded-2xl p-5 shadow hover:bg-purple-100 text-left"
+          className="bg-white rounded-2xl p-5 shadow hover:bg-opacity-70 text-left"
         >
           <h4 className="text-lg font-semibold text-[#8576FF]">📊 Dashboard</h4>
           <p className="text-sm text-gray-500">See your progress</p>
@@ -56,7 +56,7 @@ const Profile = () => {
 
         <button
           onClick={() => navigate("/quests")}
-          className="bg-white rounded-2xl p-5 shadow hover:bg-purple-100 text-left"
+          className="bg-white rounded-2xl p-5 shadow hover:bg-opacity-70 text-left"
         >
           <h4 className="text-lg font-semibold text-[#8576FF]">🗺️ Quests</h4>
           <p className="text-sm text-gray-500">Manage your journey</p>
@@ -64,7 +64,7 @@ const Profile = () => {
 
         <button
           onClick={() => navigate("/rewards")}
-          className="bg-white rounded-2xl p-5 shadow hover:bg-purple-100 text-left"
+          className="bg-white rounded-2xl p-5 shadow hover:bg-opacity-70 text-left"
         >
           <h4 className="text-lg font-semibold text-[#8576FF]">🎁 Rewards</h4>
           <p className="text-sm text-gray-500">Redeem your spark points</p>
