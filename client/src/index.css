@@ -1,0 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+  @apply bg-[#A18AFF] min-h-screen;
+}
