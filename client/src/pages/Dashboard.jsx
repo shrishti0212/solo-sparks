@@ -1,71 +1,111 @@
-import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
-import API from "../api/axios";
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import API from '../api/axios';
+import DashboardCard from '../components/DashboardCard';
+import { format } from 'date-fns';
 
 const Dashboard = () => {
   const currentUser = useSelector((state) => state.user.currentUser);
-  const [sparkPoints, setSparkPoints] = useState(0);
-  const [completedQuests, setCompletedQuests] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [reflectionsByDate, setReflectionsByDate] = useState({});
+  const [summary, setSummary] = useState({
+    reflections: 0,
+    mood: 0,
+    photos: 0,
+  });
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
+    const fetchReflections = async () => {
       try {
-        if (!currentUser?._id) return;
+        const res = await API.get('/reflections');
+        const reflections = res.data.reflections;
 
-        const pointsRes = await API.get(`/spark-points/${currentUser._id}`);
-        const questsRes = await API.get(`/quests?userId=${currentUser._id}`);
+        if (!Array.isArray(reflections)) {
+          console.error("Unexpected data:", reflections);
+          return;
+        }
 
-        setSparkPoints(pointsRes.data.totalPoints);
-        const completed = questsRes.data.quests.filter((q) => q.status === "done");
+        // Group reflections by date
+        const grouped = {};
+        let totalReflections = 0;
+        let moodCount = 0;
+        let photoCount = 0;
 
-        setCompletedQuests(completed.length);
-        setLoading(false);
-      } catch (err) {
-        console.log("fetching dashboard data:", err);
+        reflections.forEach((reflection) => {
+          const date = format(new Date(reflection.createdAt), 'yyyy-MM-dd');
+
+          if (!grouped[date]) {
+            grouped[date] = [];
+          }
+
+          grouped[date].push(reflection);
+          totalReflections++;
+
+          if (reflection.type === 'mood') moodCount++;
+          if (reflection.image) photoCount++;
+        });
+
+        setSummary({
+          reflections: totalReflections,
+          mood: moodCount,
+          photos: photoCount,
+        });
+
+        setReflectionsByDate(grouped);
+      } catch (error) {
+        console.error('Error fetching reflections:', error);
       }
     };
 
-    fetchDashboardData();
+    if (currentUser) {
+      fetchReflections();
+    }
   }, [currentUser]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#8576FF] to-[#B8B5FF] p-6 text-white font-[Roboto]">
+    <div className="p-5 px-52">
+      <h1 className='text-center text-6xl italic font-bold text-white opacity-20'>Your Entries</h1>
+      {/* Summary Box */}
       
-      <h1 className="text-3xl font-bold mb-2 uppercase font-['Exo_2']">
-        Welcome {currentUser?.name || "Explorer"}! 
-      </h1>
+<div className="bg-white text-gray-700 rounded-xl px-6 py-6 shadow-md mb-6 flex justify-around items-center">
+  
+  <div className="text-center">
+    <p className="text-2xl font-bold">{summary.reflections}</p>
+    <p className="text-sm">Reflections</p>
+  </div>
+  <div className="text-center">
+    <p className="text-2xl font-bold">{summary.mood}</p>
+    <p className="text-sm">Check-ins</p>
+  </div>
+  <div className="text-center">
+    <p className="text-2xl font-bold">{summary.photos}</p>
+    <p className="text-sm">Photos</p>
+  </div>
+</div>
 
-      <p className="text-sm font-semibold text-[#e2e1fb] font-[Roboto] mb-8">✨ Your journey continues...</p>
 
+      {/* Reflections by Date */}
+      {Object.keys(reflectionsByDate)
+        .sort((a, b) => new Date(b) - new Date(a))
+        .map((date) => (
+          <div key={date} className="mb-6">
+            <div className="flex items-center gap-4 mb-3">
+  <div className="bg-gray-200 text-center rounded-xl px-3 py-2 w-16">
+    <p className="text-xl font-bold">{format(new Date(date), 'd')}</p>
+    <p className="text-xs uppercase tracking-wide">{format(new Date(date), 'MMM')}</p>
+  </div>
+  <div>
+    <p className="text-lg font-semibold">{format(new Date(date), 'EEEE')}</p>
+    <p className="text-sm text-gray-500">
+      {Math.floor((new Date() - new Date(date)) / (1000 * 60 * 60 * 24))} days ago
+    </p>
+  </div>
+</div>
 
-      {loading ? (
-        <p className="text-white/90">Loading dashboard...</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white/20 backdrop-blur-md text-white p-6 rounded-2xl shadow-md hover:shadow-lg transition">
-            <h2 className="text-lg font-semibold uppercase mb-2">Spark Points</h2>
-            <p className="text-4xl font-bold">{sparkPoints}</p>
+            {reflectionsByDate[date].map((item) => (
+              <DashboardCard key={item._id} {...item} />
+            ))}
           </div>
-
-          <div className="bg-white/20 backdrop-blur-md text-white p-6 rounded-2xl shadow-md hover:shadow-lg transition">
-            <h2 className="text-lg font-semibold uppercase mb-2">Quests Completed</h2>
-            <p className="text-4xl font-bold">{completedQuests}</p>
-          </div>
-
-          <div className="bg-white/20 backdrop-blur-md text-white p-6 rounded-2xl shadow-md hover:shadow-lg transition">
-            <h2 className="text-lg font-semibold uppercase mb-2">Profile</h2>
-            <p>
-              <a
-                href="/profile"
-                className="text-[#E5DCFF] underline hover:text-white transition"
-              >
-                View Profile
-              </a>
-            </p>
-          </div>
-        </div>
-      )}
+        ))}
     </div>
   );
 };

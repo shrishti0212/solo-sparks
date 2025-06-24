@@ -1,63 +1,167 @@
-const { get } = require('mongoose');
 const Reflection = require('../models/Reflection');
+const DailyTask = require('../models/DailyTask');
 const addPoints = require('../utils/addPoints');
 
+const submitReflection = async (req, res) => {
+  try {
+    const { type, title, notes, mood } = req.body;
+    const imageUrl = req.file ? req.file.path : null;
+    const userId = req.user.userId;
 
-const submitReflection = async(req,res) =>{
+    const validTypes = ['daily-reflection', 'daily-challenge', 'mood', 'journal', 'photo'];
+    if (!type || !validTypes.includes(type)) {
+      return res.status(400).json({ message: 'Invalid or missing reflection type' });
+    }
 
-    const {text, questId} = req.body;
-
-     const imageUrl = req.file ? req.file.path :null;
-
-    const reflection = await Reflection.create({
-        text,
-        image: imageUrl,
-        questId,
-        createdBy: req.user.userId,
-    });
+    const today = new Date().toISOString().slice(0, 10);
     
-    await addPoints(req.user.userId, 'reflection', 10, 'Submitted a reflection');
-
-    res.status(201).json({message: 'Reflection submitted', reflection});
-
+    let task = null;
+    if (type === 'daily-reflection' || type === 'daily-challenge') {
+      task = await DailyTask.findOne({ userId, date: today });
+    if (!task) {
+      return res.status(403).json({ message: 'No task assigned for today' });
+  }
 }
 
-const submitAudioReflection = async (req, res) => {
-  try{
-  const { text, questId } = req.body;
-  const audioUrl = req.file ? req.file.path : null;
 
-  if (!audioUrl) {
-    return res.status(400).json({ message: "Audio file is required." });
-  }
+    const reflection = await Reflection.create({
+      userId,
+      type,
+      title,
+      notes,
+      mood,
+      image: imageUrl,
+    });
 
-  const reflection = await Reflection.create({
-    text,
-    audio: audioUrl,
-    questId,
-    createdBy: req.user.userId,
-  });
+    let points = 0;
+    let description = '';
 
-  await addPoints(req.user.userId, 'audio-reflection', 15, 'Submitted an audio reflection');
+    if (type === 'daily-reflection' && !task.isReflectionCompleted) {
+      points = 15;
+      description = 'Completed daily reflection task';
+      task.isReflectionCompleted = true;
+    }
 
-  res.status(201).json({ message: 'Audio reflection submitted', reflection });
-  }catch(error){
-    console.error("Audio reflection failed:", error);
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    if (type === 'daily-challenge' && !task.isChallengeCompleted) {
+      points = 20;
+      description = 'Completed daily challenge task';
+      task.isChallengeCompleted = true;
+    }
+
+    if (points > 0) {
+      await task.save();
+      await addPoints(userId, type, points, description);
+    }
+
+    if (type === 'photo' && !imageUrl) {
+      return res.status(400).json({ message: 'Photo reflection must include an image' });
+    }
+
+    res.status(201).json({
+      message: `${type} reflection submitted`,
+      reflection,
+      pointsEarned: points,
+      taskUpdated: !!points,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
 
+const getUserReflections = async (req, res) => {
+  try {
+    const { type, date } = req.query;
+    const userId = req.user.userId;
 
-const getQuestReflections = async(req,res) =>{
-    const {questId} =req.params;
+    const query = { userId };
+    if (type) query.type = type;
+    if (date) {
+      const dayStart = new Date(date);
+      const dayEnd = new Date(date);
+      dayEnd.setHours(23, 59, 59, 999);
+      query.createdAt = { $gte: dayStart, $lte: dayEnd };
+    }
 
-    const reflections= await Reflection.find({
-        questId,
-    
-        createdBy: req.user.userId,
-    });
+    const reflections = await Reflection.find(query).sort({ createdAt: -1 });
+    res.status(200).json({ reflections });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
 
-    res.status(200).json({reflections});
-}
+const updateReflection = async (req, res) => {
+  try {
+    const reflectionId = req.params.id;
+    const userId = req.user.userId;
+    const { title, notes, mood } = req.body;
+    const imageUrl = req.file ? req.file.path : null;
 
-module.exports = { submitReflection, submitAudioReflection, getQuestReflections};
+    const reflection = await Reflection.findById(reflectionId);
+    if (!reflection) {
+      return res.status(404).json({ message: 'Reflection not found' });
+    }
+
+    if (reflection.userId.toString() !== userId) {
+      return res.status(403).json({ message: 'Not authorized to update this reflection' });
+    }
+
+    if (title) reflection.title = title;
+    if (notes) reflection.notes = notes;
+    if (mood) reflection.mood = mood;
+    if (imageUrl) reflection.image = imageUrl;
+
+    await reflection.save();
+    res.status(200).json({ message: 'Reflection updated successfully', reflection });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+const deleteReflection = async (req, res) => {
+  try {
+    const reflectionId = req.params.id;
+    const userId = req.user.userId;
+
+    const reflection = await Reflection.findById(reflectionId);
+    if (!reflection) {
+      return res.status(404).json({ message: 'Reflection not found' });
+    }
+
+    if (reflection.userId.toString() !== userId) {
+      return res.status(403).json({ message: 'Not authorized to delete this reflection' });
+    }
+
+    await Reflection.findByIdAndDelete(reflectionId);
+    res.status(200).json({ message: 'Reflection deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+const getReflectionById = async (req, res) => {
+  try {
+    const reflectionId = req.params.id;
+    const userId = req.user.userId;
+
+    const reflection = await Reflection.findById(reflectionId);
+    if (!reflection) {
+      return res.status(404).json({ message: 'Reflection not found' });
+    }
+
+    if (reflection.userId.toString() !== userId) {
+      return res.status(403).json({ message: 'Not authorized to access this reflection' });
+    }
+
+    res.status(200).json(reflection);
+  } catch (error) {
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+module.exports = {
+  submitReflection,
+  getUserReflections,
+  updateReflection,
+  deleteReflection,
+  getReflectionById
+};

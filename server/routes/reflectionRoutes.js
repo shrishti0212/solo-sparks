@@ -1,21 +1,35 @@
-const express = require('express')
+const express = require('express');
 const router = express.Router();
 
-const{submitReflection,
-    submitAudioReflection,
-    getQuestReflections
-}=require('../controllers/reflectionController');
+const {
+  submitReflection,
+  getUserReflections,
+  updateReflection,
+  deleteReflection,
+  getReflectionById
+} = require('../controllers/reflectionController');
 
-const authMiddleware =  require('../middleware/authMiddleware');
-const{uploadImage,uploadVideo} = require('../utils/cloudinary');
+const authMiddleware = require('../middleware/authMiddleware');
+const { uploadImage } = require('../utils/cloudinary');
 
+// POST: Submit a new reflection
+router.post(
+  '/',
+  authMiddleware,
+  uploadImage.single('image'),
+  submitReflection
+);
 
-router.post('/text',authMiddleware, uploadImage.single('image') , submitReflection);
+// GET: Get all reflections of logged-in user with optional ?type=&date=
+router.get('/', authMiddleware, getUserReflections);
 
+// GET: Get one reflection by its ID (must belong to the user)
+router.get('/:id', authMiddleware, getReflectionById);
 
-router.post('/audio', authMiddleware, uploadVideo.single('audio'), submitAudioReflection);
+// PUT: Update a reflection by ID
+router.put('/:id', authMiddleware, uploadImage.single('image'), updateReflection);
 
-
-router.get('/:questId',authMiddleware,getQuestReflections);
+// DELETE: Delete a reflection by ID
+router.delete('/:id', authMiddleware, deleteReflection);
 
 module.exports = router;

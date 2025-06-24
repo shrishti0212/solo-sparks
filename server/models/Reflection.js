@@ -1,28 +1,35 @@
-// models/Reflection.js
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const ReflectionSchema = new mongoose.Schema({
-  text: {
-    type: String,
-    required: [true, 'Please provide your reflection'],
-  },
-  image: {
-    type: String,
-  },
-  audio: {   
-    type: String,
-  },
-  questId: {
+
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Quest',
+    ref: "User",
     required: true,
   },
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+
+  type: {
+    type: String,
+    enum: ["daily-reflection", "daily-challenge", "mood", "journal","photo"],
     required: true,
   },
+  
+  title: String,
+
+  notes: String,
+
+  mood: {
+    emoji: String,
+    label: String,
+  },
+
+  image: String,
+
+  rewardPoints: {
+    type: Number,
+    default: 0,
+  },
+
 }, { timestamps: true });
 
-
-module.exports = mongoose.model('Reflection', ReflectionSchema);
+module.exports = mongoose.model("Reflection", ReflectionSchema);

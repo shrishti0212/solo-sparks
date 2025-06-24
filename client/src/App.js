@@ -4,25 +4,29 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import React from "react";
 import Navbar from "./components/Navbar";
 
+
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
-import Quests from "./pages/Quests";
 import Rewards from "./pages/Rewards";
-import MoodCheckin from "./pages/MoodCheckin";
 
-import UploadAudioReflection from "./components/UploadAudioReflection";
-import UploadPhotoReflection from "./components/UploadPhotoReflection";
+//import UploadAudioReflection from "./components/UploadAudioReflection";
 import ProtectedRoute from "./components/ProtectedRoute";
+import DailyChallengeForm from "./components/reflections/DailyChallengeForm";
+import DailyReflectionForm from "./components/reflections/DailyReflectionForm";
+import JournalForm from "./components/reflections/JournalForm";
+import MoodForm from "./components/reflections/MoodForm";
+import PhotoForm from "./components/reflections/PhotoForm";
+import TaskPage from "./pages/TaskPage";
 
 const appRouter = createBrowserRouter([
   {
     path:'/',
     element: (
       <>
-        <Navbar/>,
+        <Navbar/>
         <Home/>
       </>
     ),
@@ -73,52 +77,131 @@ const appRouter = createBrowserRouter([
       </ProtectedRoute>
     )
   },
-
+  
   {
-    path: '/quests',
-    element: (
-      <ProtectedRoute>
+  path: '/task/daily-challenge',
+  element: (
+    <ProtectedRoute>
       <>
         <Navbar />
-        <Quests />
+        <DailyChallengeForm />
       </>
-      </ProtectedRoute>
-    ),
-  },
+    </ProtectedRoute>
+  )
+},
+{
+  path: '/task/daily-reflection',
+  element: (
+    <ProtectedRoute>
+      <>
+        <Navbar />
+        <DailyReflectionForm />
+      </>
+    </ProtectedRoute>
+  )
+},
+{
+  path: '/task/journal',
+  element: (
+    <ProtectedRoute>
+      <>
+        <Navbar />
+        <JournalForm />
+      </>
+    </ProtectedRoute>
+  )
+},
+{
+  path: '/task/photo',
+  element: (
+    <ProtectedRoute>
+      <>
+        <Navbar />
+        <PhotoForm />
+      </>
+    </ProtectedRoute>
+  )
+},
+{
+  path: '/task/mood',
+  element: (
+    <ProtectedRoute>
+      <>
+        <Navbar />
+        <MoodForm />
+      </>
+    </ProtectedRoute>
+  )
+},
+{
+  path: '/task/:type',
+  element: (
+    <ProtectedRoute>
+      <>
+        <Navbar />
+        <TaskPage />
+      </>
+    </ProtectedRoute>
+  ),
+},
+{
+  path: '/reflection/photo/:id',
+  element: (
+    <ProtectedRoute>
+      <>
+        <Navbar />
+        <PhotoForm />
+      </>
+    </ProtectedRoute>
+  )
+},
+{
+  path: '/reflection/journal/:id',
+  element: (
+    <ProtectedRoute>
+      <>
+        <Navbar />
+        <JournalForm />
+      </>
+    </ProtectedRoute>
+  )
+},
+{
+  path: '/reflection/mood/:id',
+  element: (
+    <ProtectedRoute>
+      <>
+        <Navbar />
+        <MoodForm />
+      </>
+    </ProtectedRoute>
+  )
+},
+{
+  path: '/reflection/daily/:id',
+  element: (
+    <ProtectedRoute>
+      <>
+        <Navbar />
+        <DailyReflectionForm />
+      </>
+    </ProtectedRoute>
+  )
+},
+{
+  path: '/reflection/challenge/:id',
+  element: (
+    <ProtectedRoute>
+      <>
+        <Navbar />
+        <DailyChallengeForm />
+      </>
+    </ProtectedRoute>
+  )
+},
 
-  {
-    path:'/mood-checkin',
-    element:(
-      <ProtectedRoute>
-        <>
-        <Navbar/>
-        <MoodCheckin/>
-        </>
-      </ProtectedRoute>
-    )
-  },
-  {
-    path:'/upload/audio',
-    element:(
-      <ProtectedRoute>
-        <>
-        <Navbar/>
-        <UploadAudioReflection/>
-        </>
-      </ProtectedRoute>
-    )
-  },
-  {
-    path:'/upload/photo',
-    element:(
-      <ProtectedRoute>
-        <>
-        <Navbar/>
-        <UploadPhotoReflection/>
-        </>
-      </ProtectedRoute>
-    )
-  },
+
+
 
 ])
 

@@ -41,7 +41,7 @@ const Login = () => {
 
       const res = await axios.post(url, payload);
 
-      dispatch(setUser(res.data.user));
+      dispatch(setUser({ ...res.data.user, token: res.data.token }));
       localStorage.setItem("token", res.data.token);
 
       alert(`${isRegister ? "Registered" : "Logged in"} successfully`);

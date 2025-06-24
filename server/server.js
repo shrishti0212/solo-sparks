@@ -5,7 +5,7 @@ const connectDB = require("./db/connect");
 
 const authRouter = require('./routes/authRoutes');
 
-const questRouter = require('./routes/questRoutes');
+// const questRouter = require('./routes/questRoutes');
 
 const reflectionRouter = require('./routes/reflectionRoutes');
 
@@ -16,6 +16,8 @@ const sparkPointsRouter = require('./routes/sparkPointsRoutes');
 const rewardRouter = require('./routes/rewardRoutes');
 
 const userProfileRouter = require('./routes/userProfileRoutes');
+
+const dailyTaskRouter = require('./routes/dailyTask');
 
 const app = express();
 
@@ -42,7 +44,7 @@ const corsOptions = {
     }
   },
   credentials: true,
-  methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+  methods: ["GET", "POST", "PATCH", "DELETE","PUT", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 };
 
@@ -58,13 +60,13 @@ app.get("/", (req, res) => {
 
 //Routes
 app.use('/auth',authRouter);
-app.use('/quests', questRouter);
+// app.use('/quests', questRouter);
 app.use('/reflections', reflectionRouter);
 app.use('/moods', moodRouter);
 app.use('/spark-points',sparkPointsRouter);
 app.use('/rewards', rewardRouter);
 app.use('/user-profile',userProfileRouter);
-
+app.use('/tasks',dailyTaskRouter);
 
 const start = async () => {
   try {

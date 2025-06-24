@@ -31,7 +31,6 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-[#F3F4F8] p-6">
-      
       <div className="bg-gradient-to-br from-[#8576FF] to-[#B8B5FF] rounded-3xl text-white p-6 shadow-md">
         <div className="flex flex-col items-center">
           <FaUserCircle className="text-6xl mb-2" />
@@ -44,8 +43,9 @@ const Profile = () => {
         </div>
       </div>
 
-      
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+        {/* 📊 Dashboard */}
         <button
           onClick={() => navigate("/dashboard")}
           className="bg-white rounded-2xl p-5 shadow hover:bg-opacity-70 text-left"
@@ -54,14 +54,16 @@ const Profile = () => {
           <p className="text-sm text-gray-500">See your progress</p>
         </button>
 
+        {/* 📝 Add Journal */}
         <button
-          onClick={() => navigate("/quests")}
+          onClick={() => navigate("/task/journal")}
           className="bg-white rounded-2xl p-5 shadow hover:bg-opacity-70 text-left"
         >
-          <h4 className="text-lg font-semibold text-[#8576FF]">🗺️ Quests</h4>
-          <p className="text-sm text-gray-500">Manage your journey</p>
+          <h4 className="text-lg font-semibold text-[#8576FF]">📝 Add Journal</h4>
+          <p className="text-sm text-gray-500">Write your thoughts</p>
         </button>
 
+        {/* 🎁 Rewards */}
         <button
           onClick={() => navigate("/rewards")}
           className="bg-white rounded-2xl p-5 shadow hover:bg-opacity-70 text-left"
@@ -70,6 +72,7 @@ const Profile = () => {
           <p className="text-sm text-gray-500">Redeem your spark points</p>
         </button>
 
+        {/* 🚪 Logout */}
         <button
           onClick={handleLogout}
           className="bg-[#8576FF] text-white rounded-2xl p-5 shadow hover:opacity-90 text-left"

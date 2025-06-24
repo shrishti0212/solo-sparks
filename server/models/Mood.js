@@ -1,28 +1,19 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const MoodSchema = new mongoose.Schema({
-    mood:{
-        type:String,
-        enum:['happy','sad','anxious','calm','excited','tired','neutral'],
-        required:true,
-    },
+  mood: {
+    type: String,
+    enum: ['happy', 'sad', 'anxious', 'calm', 'excited', 'tired', 'neutral'],
+    required: true,
+  },
+  note: String,
 
-    note:{
-        type:String,
-    },
-
-    questId:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Quest',
-    },
-
-    createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref:'User',
-        required: true,
-    }
-},{timestamps: true}
-)
-
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  
+}, { timestamps: true });
 
 module.exports = mongoose.model('Mood', MoodSchema);

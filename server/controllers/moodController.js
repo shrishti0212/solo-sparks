@@ -5,7 +5,7 @@ const addPoints = require('../utils/addPoints');
 const submitMood = async (req, res) =>{
 
     try{
-    const{mood, note, questId} = req.body;
+    const{mood, note} = req.body;
 
     const moodEntry = await Mood.create({
         mood,

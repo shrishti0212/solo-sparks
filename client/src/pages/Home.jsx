@@ -1,105 +1,91 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import API from "../api/axios";
-import { FaPlus, FaTimes, FaMicrophone, FaImage, FaSmile } from "react-icons/fa";
+import React from 'react';
+import HomepageCard from '../components/HomepageCard';
+import { useNavigate } from 'react-router-dom';
+import { Plus, ImagePlus, Smile, FileText } from 'lucide-react';
 
 const Home = () => {
   const navigate = useNavigate();
-  const [date, setDate] = useState("");
-  const [quote, setQuote] = useState("You are your best investment.");
-  const [latestQuest, setLatestQuest] = useState(null);
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  useEffect(() => {
-    const today = new Date();
-    const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
-    setDate(today.toLocaleDateString("en-US", options));
-
-    const fetchQuest = async () => {
-      try {
-        const res = await API.get("/quests");
-        const sorted = res.data.quests.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        setLatestQuest(sorted[0]);
-      } catch (err) {
-        console.error("Error fetching latest quest:", err);
-      }
-    };
-
-    fetchQuest();
-  }, []);
+  const today = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
 
   return (
-    <div className="min-h-screen text-white/90 p-6 relative bg-gradient-to-br from-[#8576FF] to-[#B8B5FF]">
-      
-      {/* TODAY SECTION */}
-      <h1 className="text-3xl font-bold uppercase font-[Roboto]">Today</h1>
-      <p className="text-sm font-semibold text-[#e2e1fb] font-[Roboto] mb-6">{date}</p>
-
-      {/* QUOTE BELOW DATE */}
-      <div className="bg-white/20 backdrop-blur-sm text-white rounded-2xl p-5 mb-10 shadow-md font-[Roboto] italic text-center">
-        “{quote}”
+    <div className="min-h-screen text-white px-8 py-4 relative">
+      {/* Date Header */}
+      <div className="mb-6">
+        <h2 className="text-3xl font-bold italic">Today</h2>
+        <p className="text-sm font-semibold text-purple-100">{today}</p>
       </div>
 
-      {/* DAILY CHECK-IN */}
-      <div
-        onClick={() => navigate("/mood-checkin")}
-        className="bg-white/20 backdrop-blur-sm text-white rounded-2xl p-8 mb-8 shadow-md hover:shadow-lg transition cursor-pointer"
-      >
-        <h3 className="text-lg font-semibold uppercase font-[Roboto] text-white mb-2">
-          🧠 Daily Check-In
-        </h3>
-        <p className="text-sm text-white/80">Log how you're feeling today</p>
+      {/* Daily Reflection Card */}
+      <div className="mb-4">
+        <HomepageCard
+          title="TRUTH"
+          description="Every Tuesday, speak your truth"
+          icon="🧠"
+          type="daily-reflection"
+          route="/task/daily-reflection"
+          preview="I believe true leadership means _______."
+          background="bg-[#7c83de] text-purple-800"
+        />
       </div>
 
-      {/* LATEST QUEST */}
-      {latestQuest && (
-        <div
-          onClick={() => navigate("/quests")}
-          className="bg-white/20 backdrop-blur-sm text-white rounded-2xl p-8 mb-8 shadow-md hover:shadow-lg transition cursor-pointer"
-        >
-          <h3 className="text-lg font-semibold uppercase font-[Roboto] mb-2">
-            🧩 Your Latest Quest
-          </h3>
-          <p className="text-sm text-white/80">{latestQuest.title}</p>
-        </div>
-      )}
-
-      {/* FLOATING ACTION BUTTONS */}
-      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
-        <div className="relative">
+      {/* Daily Challenge Card */}
+      <div className="mb-4">
+        <HomepageCard
+          title="Daily Challenge"
+          description={today}
+          icon="🏔️"
+          type="daily-challenge"
+          route="/task/daily-challenge"
+          background="bg-purple-700"
           
-          {isExpanded && (
-            <div className="absolute bottom-16 flex flex-col gap-4 items-center">
-              <button
-                onClick={() => navigate("/mood-checkin")}
-                className="bg-[#8576FF] text-white w-14 h-14 rounded-md shadow-xl hover:bg-[#786fbd] transition flex items-center justify-center"
+        />
+      </div>
 
-              >
-                <FaSmile />
-              </button>
-              <button
-                onClick={() => navigate("/upload/audio")}
-                className="bg-[#8576FF] text-white w-14 h-14 rounded-md shadow-xl hover:bg-[#786fbd] transition flex items-center justify-center"
+      {/* Daily Check-in Card */}
+      <div className="mb-4">
+        <HomepageCard
+          title="Daily Check-in"
+          description="How are you feeling today?"
+          icon="😊"
+          type="mood"
+          route="/task/mood"
+          background="bg-[#a974d2]"  // light purple (you can change)
+       />
+      </div>
 
-              >
-                <FaMicrophone />
-              </button>
-              <button
-                onClick={() => navigate("/upload/photo")}
-                className="bg-[#8576FF] text-white w-14 h-14 rounded-md shadow-xl hover:bg-[#786fbd] transition flex items-center justify-center"
 
-              >
-                <FaImage />
-              </button>
-            </div>
-          )}
+      {/* Motivational Quote */}
+      <div className="mb-24">
+        <div className="rounded-3xl p-5 bg-purple-300 text-white shadow-md">
+          <blockquote className="italic text-center">
+            “Be happy in the moment, that’s enough. Each moment is all we need, not more.”
+          </blockquote>
+        </div>
+      </div>
 
-          <button
-            className="bg-white text-[#8576FF] text-2xl w-14 h-14 rounded-md shadow-xl hover:bg-[#f0f0ff] transition flex items-center justify-center"
-            onClick={() => setIsExpanded((prev) => !prev)}
-          >
-            {isExpanded ? <FaTimes /> : <FaPlus />}
-          </button>
+
+
+      {/* Floating Add Buttons */}
+      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2">
+        <div className="bg-white text-purple-600 rounded-full p-4 shadow-lg">
+          <div className="flex gap-4 items-center">
+            <button onClick={() => navigate('/task/photo', { state: { type: 'photo' } })}>
+              <ImagePlus size={24} />
+            </button>
+            <button onClick={() => navigate('/task/mood', { state: { type: 'mood' } })}>
+              <Smile size={24} />
+            </button>
+            <button onClick={() => navigate('/task/journal', { state: { type: 'journal' } })}>
+              <FileText size={24} />
+            </button>
+            <button className="bg-purple-600 text-white p-2 rounded-full" disabled>
+              <Plus size={20} />
+            </button>
+          </div>
         </div>
       </div>
     </div>

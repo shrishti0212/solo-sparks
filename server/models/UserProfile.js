@@ -18,11 +18,7 @@ const UserProfileSchema = new mongoose.Schema({
     default: [],
   },
 
-  pastQuestTypes: {
-    type: [String],
-    default: [],
-  },
-
+  
   moodPatterns: [
     {
       mood: {
@@ -30,6 +26,7 @@ const UserProfileSchema = new mongoose.Schema({
         enum: ['happy', 'sad', 'anxious', 'calm', 'excited', 'tired', 'neutral'],
         required: true,
       },
+
       timestamp: {
         type: Date,
         default: Date.now,

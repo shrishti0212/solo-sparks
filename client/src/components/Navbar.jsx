@@ -25,6 +25,8 @@ const Navbar = () => {
           >
             Home
           </NavLink>
+
+
           <NavLink
             to="/dashboard"
             className={({ isActive }) =>
@@ -35,26 +37,7 @@ const Navbar = () => {
           >
             Dashboard
           </NavLink>
-          <NavLink
-            to="/quests"
-            className={({ isActive }) =>
-              isActive
-                ? "text-purple-700 border-b-2 border-purple-700 pb-1"
-                : "text-gray-700 hover:text-purple-700"
-            }
-          >
-            Quests
-          </NavLink>
-          <NavLink
-            to="/profile"
-            className={({ isActive }) =>
-              isActive
-                ? "text-purple-700 border-b-2 border-purple-700 pb-1"
-                : "text-gray-700 hover:text-purple-700"
-            }
-          >
-            Profile
-          </NavLink>
+
           <NavLink
             to="/rewards"
             className={({ isActive }) =>
@@ -67,13 +50,15 @@ const Navbar = () => {
           </NavLink>
 
           <NavLink
-            to="/login"
-            className={({isActive}) => 
-              isActive 
-            ? "text-purple-700 border-b-2 border-purple-700 pb-1"
-            : "text-gray-700 hover:text-purple-700"
-          }
-          >Login</NavLink>
+            to="/profile"
+            className={({ isActive }) =>
+              isActive
+                ? "text-purple-700 border-b-2 border-purple-700 pb-1"
+                : "text-gray-700 hover:text-purple-700"
+            }
+          >
+            Profile
+          </NavLink>
 
         </div>
       </div>

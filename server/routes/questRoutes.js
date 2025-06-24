@@ -1,25 +1,25 @@
-const express = require('express')
-const router = express.Router();
+// const express = require('express')
+// const router = express.Router();
 
-const {createQuest, 
-    getUserQuests, 
-    updateQuest, 
-    deleteQuest
-    } = require('../controllers/questController');
+// const {createQuest, 
+//     getUserQuests, 
+//     updateQuest, 
+//     deleteQuest
+//     } = require('../controllers/questController');
 
-const {recommendQuests }=require('../controllers/questRecommendationController')
+// const {recommendQuests }=require('../controllers/questRecommendationController')
 
-const authMiddleware = require('../middleware/authMiddleware')
-
-
-router.post('/',authMiddleware,createQuest);
+// const authMiddleware = require('../middleware/authMiddleware')
 
 
+// router.post('/',authMiddleware,createQuest);
 
-router.get('/',authMiddleware, getUserQuests);
 
-router.patch('/:id', authMiddleware, updateQuest);  
-router.delete('/:id', authMiddleware, deleteQuest);  
 
-router.get('/recommend',authMiddleware,recommendQuests);
-module.exports = router; 
+// router.get('/',authMiddleware, getUserQuests);
+
+// router.patch('/:id', authMiddleware, updateQuest);  
+// router.delete('/:id', authMiddleware, deleteQuest);  
+
+// router.get('/recommend',authMiddleware,recommendQuests);
+// module.exports = router; 
