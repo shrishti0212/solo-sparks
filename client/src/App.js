@@ -6,8 +6,6 @@ import Navbar from "./components/Navbar";
 import { Toaster } from 'react-hot-toast';
 
 import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Rewards from "./pages/Rewards";

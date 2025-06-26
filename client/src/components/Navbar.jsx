@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../utils/userSlice";
+import logo from "../images/logo.png"
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -13,11 +14,11 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white/90 text-gray-800 px-9 py-5 rounded-b-xl shadow-md backdrop-blur-sm">
-      <div className="flex justify-between items-center mx-auto">
-        <h1 className="text-2xl font-bold tracking-wide">Solo Sparks</h1>
+    <nav className="w-full bg-white/90 text-gray-800 px-3 sm:px-6 py-4 shadow-md backdrop-blur-sm sm:h-24">
+      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-5">
+        <h1 className="text-2xl font-bold tracking-wide ">Solo Sparks</h1>
 
-        <div className="flex gap-6 text-sm font-medium items-center">
+        <div className="flex flex-wrap justify-center gap-4 text-sm font-medium items-center">
           <NavLink
             to="/"
             className={({ isActive }) =>
@@ -62,14 +63,7 @@ const Navbar = () => {
             Profile
           </NavLink>
 
-          {currentUser && (
-            <button
-              onClick={handleLogout}
-              className="text-red-500 hover:underline text-sm"
-            >
-              Logout
-            </button>
-          )}
+          
         </div>
       </div>
     </nav>

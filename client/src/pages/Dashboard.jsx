@@ -86,7 +86,7 @@ const Dashboard = () => {
   return (
     <div className="px-3 sm:px-4 md:px-8 lg:px-16 xl:px-32 py-5">
       <div className="max-w-screen-sm sm:max-w-screen-md mx-auto">
-        <h1 className="text-center text-6xl italic font-bold text-white opacity-20 pt-2">
+        <h1 className="text-center sm:text-2xl text-6xl italic font-bold text-white opacity-20 pt-2 ">
           Your Entries
         </h1>
 

@@ -79,10 +79,11 @@ const Home = () => {
 
 
 return (
-  <div className="min-h-screen bg-gradient-to-br from-[#8576FF] to-[#B8B5FF] px-6 py-8 text-white relative">
+  <div className="min-h-screen w-full  px-6 py-8 ">
+    <div className="max-w-3xl mx-auto">
     {/* Date Header */}
     <div className="mb-6">
-      <h2 className="text-3xl font-bold italic">Today</h2>
+      <h2 className="text-3xl font-bold italic text-white">Today</h2>
       <p className="text-sm font-semibold text-purple-100">{todayFormatted}</p>
     </div>
 
@@ -195,6 +196,7 @@ return (
           </button>
         </div>
       </div>
+    </div>
     </div>
   </div>
 );

@@ -8,41 +8,49 @@ const assignDailyTasksToUser = async (req, res) => {
   try {
     const userId = req.user.userId;
     const today = moment().format('YYYY-MM-DD');
-
-    // Check if already assigned
-    const existing = await AssignedTask.find({ userId, date: today });
-    if (existing.length === 2) {
-      const populated = await AssignedTask.find({ userId, date: today }).populate('promptId');
-      return res.status(200).json({ message: "Tasks already assigned for today", tasks: populated });
-    }
-
-    const tasks = [];
+    const assignedTasks = [];
 
     for (let type of ['daily-reflection', 'daily-challenge']) {
-      const prompts = await Prompt.find({ type });
-      const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+      const existingTask = await AssignedTask.findOne({ userId, type, date: today });
 
-      const newTask = new AssignedTask({
-        userId,
-        promptId: randomPrompt._id,
-        type,
-        date: today
-      });
+      if (!existingTask) {
+        const prompts = await Prompt.find({ type });
+        if (prompts.length === 0) {
+          continue; // skip if no prompts exist
+        }
 
-      await newTask.save();
-      tasks.push(newTask);
+        const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+
+        const newTask = await AssignedTask.create({
+          userId,
+          promptId: randomPrompt._id,
+          type,
+          date: today
+        });
+
+        assignedTasks.push(newTask);
+      } else {
+        assignedTasks.push(existingTask); // include existing for response
+      }
     }
 
+    // Always return populated tasks for today
     const populatedTasks = await AssignedTask.find({
-      _id: { $in: tasks.map((t) => t._id) }
+      userId,
+      date: today
     }).populate('promptId');
 
-    res.status(201).json({ message: "Tasks assigned", tasks: populatedTasks });
+    return res.status(200).json({
+      message: "Today's tasks ready",
+      tasks: populatedTasks
+    });
+
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Error assigning tasks" });
+    console.error("Error assigning tasks:", err);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 
 // GET: Fetch today's tasks
