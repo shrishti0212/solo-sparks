@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import API from "../api/axios";
+import toast from "react-hot-toast"
 
 const Rewards = () => {
   const currentUser = useSelector((state) => state.user.currentUser);
@@ -25,14 +26,18 @@ const Rewards = () => {
   }, [currentUser]);
 
   const handleRedeem = async (rewardId, cost) => {
-    if (sparkPoints < cost) return alert("Not enough Spark Points!");
+    if (sparkPoints < cost) {
+      toast.error("Not enough Spark Points!");
+    return 
+  }
 
     try {
       await API.post(`/rewards/redeem/${rewardId}`);
       setSparkPoints((prev) => prev - cost);
-      alert("🎉 Reward redeemed!");
+      toast.success("🎉 Reward redeemed!");
     } catch (err) {
       console.error("Error redeeming reward:", err);
+      toast.error("Failed to redeem reward. Please try again.");
     }
   };
 

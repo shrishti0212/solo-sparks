@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 import { logoutUser } from "../utils/userSlice";
 import API from "../api/axios";
+import { motion } from "framer-motion";
 
 const Profile = () => {
   const currentUser = useSelector((state) => state.user.currentUser);
@@ -31,7 +32,12 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-[#F3F4F8] p-6">
-      <div className="bg-gradient-to-br from-[#8576FF] to-[#B8B5FF] rounded-3xl text-white p-6 shadow-md">
+      <motion.div
+        className="bg-gradient-to-br from-[#8576FF] to-[#B8B5FF] rounded-3xl text-white p-6 shadow-md"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4 }}
+      >
         <div className="flex flex-col items-center">
           <FaUserCircle className="text-6xl mb-2" />
           <h2 className="text-2xl font-bold">{currentUser?.name}</h2>
@@ -41,45 +47,49 @@ const Profile = () => {
           <p className="text-sm">✨ Spark Points</p>
           <p className="text-2xl font-bold">{sparkPoints}</p>
         </div>
-      </div>
+      </motion.div>
 
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-        {/* 📊 Dashboard */}
-        <button
-          onClick={() => navigate("/dashboard")}
-          className="bg-white rounded-2xl p-5 shadow hover:bg-opacity-70 text-left"
-        >
-          <h4 className="text-lg font-semibold text-[#8576FF]">📊 Dashboard</h4>
-          <p className="text-sm text-gray-500">See your progress</p>
-        </button>
-
-        {/* 📝 Add Journal */}
-        <button
-          onClick={() => navigate("/task/journal")}
-          className="bg-white rounded-2xl p-5 shadow hover:bg-opacity-70 text-left"
-        >
-          <h4 className="text-lg font-semibold text-[#8576FF]">📝 Add Journal</h4>
-          <p className="text-sm text-gray-500">Write your thoughts</p>
-        </button>
-
-        {/* 🎁 Rewards */}
-        <button
-          onClick={() => navigate("/rewards")}
-          className="bg-white rounded-2xl p-5 shadow hover:bg-opacity-70 text-left"
-        >
-          <h4 className="text-lg font-semibold text-[#8576FF]">🎁 Rewards</h4>
-          <p className="text-sm text-gray-500">Redeem your spark points</p>
-        </button>
-
-        {/* 🚪 Logout */}
-        <button
-          onClick={handleLogout}
-          className="bg-[#8576FF] text-white rounded-2xl p-5 shadow hover:opacity-90 text-left"
-        >
-          <h4 className="text-lg font-semibold">🚪 Logout</h4>
-          <p className="text-sm">End your session safely</p>
-        </button>
+        {[
+          {
+            label: "📊 Dashboard",
+            desc: "See your progress",
+            onClick: () => navigate("/dashboard"),
+            customStyle: "bg-white text-[#8576FF]"
+          },
+          {
+            label: "📝 Add Journal",
+            desc: "Write your thoughts",
+            onClick: () => navigate("/task/journal"),
+            customStyle: "bg-white text-[#8576FF]"
+          },
+          {
+            label: "🎁 Rewards",
+            desc: "Redeem your spark points",
+            onClick: () => navigate("/rewards"),
+            customStyle: "bg-white text-[#8576FF]"
+          },
+          {
+            label: "🚪 Logout",
+            desc: "End your session safely",
+            onClick: handleLogout,
+            customStyle: "bg-[#8576FF] text-white",
+          },
+        ].map((btn, i) => (
+          <motion.button
+            key={i}
+            onClick={btn.onClick}
+            className={`rounded-2xl p-5 shadow text-left ${
+              btn.customStyle || "bg-white"
+            } hover:opacity-90`}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 * i }}
+          >
+            <h4 className="text-lg font-semibold ">{btn.label}</h4>
+            <p className="text-sm text-gray-600">{btn.desc}</p>
+          </motion.button>
+        ))}
       </div>
     </div>
   );

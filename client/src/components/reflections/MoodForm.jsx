@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import API from '../../api/axios';
+import toast from 'react-hot-toast';
 
 const MoodForm = () => {
   const { id } = useParams();
@@ -31,14 +32,10 @@ const MoodForm = () => {
       const fetchMood = async () => {
         try {
           const res = await API.get(`/reflections/${id}`);
-          const moodLabel = res.data.notes?.split(' ')?.[1]; // extract label
+          const moodLabel = res.data.notes?.split(' ')?.[1];
           const index = moods.findIndex((m) => m.label === moodLabel);
-          if (index !== -1) {
-            setSliderValue(index);
-          }
-        } catch (err) {
-          console.error('Failed to load mood', err);
-        }
+          if (index !== -1) setSliderValue(index);
+        } catch {}
       };
       fetchMood();
     }
@@ -52,20 +49,20 @@ const MoodForm = () => {
     formData.append('type', 'mood');
     formData.append('title', `Mood: ${selectedMood.label}`);
     formData.append('notes', `${selectedMood.emoji} ${selectedMood.label}`);
+    formData.append('mood', JSON.stringify(selectedMood));
 
     try {
       setLoading(true);
       if (id) {
         await API.put(`/reflections/${id}`, formData);
-        alert('Mood updated!');
+        toast.success('Mood updated!');
       } else {
         await API.post('/reflections', formData);
-        alert('Mood saved!');
+        toast.success('Mood saved!');
       }
       navigate('/dashboard');
-    } catch (err) {
-      console.error(err);
-      alert('Something went wrong');
+    } catch {
+      toast.error('Something went wrong');
     } finally {
       setLoading(false);
     }
@@ -80,6 +77,7 @@ const MoodForm = () => {
         <p className="text-sm text-center font-semibold text-[#474270] mb-10">{today}</p>
 
         <form onSubmit={handleSubmit}>
+          {/* Mood Slider */}
           <div className="w-full mb-4">
             <input
               type="range"
@@ -95,6 +93,7 @@ const MoodForm = () => {
             </div>
           </div>
 
+          {/* Submit */}
           <button
             type="submit"
             disabled={loading}

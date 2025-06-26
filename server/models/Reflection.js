@@ -14,21 +14,27 @@ const ReflectionSchema = new mongoose.Schema({
     required: true,
   },
   
-  title: String,
+  title: { type: String, trim: true },
 
-  notes: String,
+  notes: { type: String, trim: true },
 
   mood: {
     emoji: String,
     label: String,
   },
 
-  image: String,
+  image: { type: String, trim: true },
 
   rewardPoints: {
     type: Number,
     default: 0,
   },
+
+  assignedTaskId: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'AssignedTask'
+}
+
 
 }, { timestamps: true });
 

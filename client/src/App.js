@@ -3,7 +3,7 @@ import store from './utils/store';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import React from "react";
 import Navbar from "./components/Navbar";
-
+import { Toaster } from 'react-hot-toast';
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -20,6 +20,7 @@ import JournalForm from "./components/reflections/JournalForm";
 import MoodForm from "./components/reflections/MoodForm";
 import PhotoForm from "./components/reflections/PhotoForm";
 import TaskPage from "./pages/TaskPage";
+import AuthForm from "./pages/AuthForm";
 
 const appRouter = createBrowserRouter([
   {
@@ -58,12 +59,12 @@ const appRouter = createBrowserRouter([
 
   {
     path:'/login',
-    element:<Login/>
+    element:<AuthForm/>
   },
 
   {
     path:'/register',
-    element:<Register/>
+    element:<AuthForm/>
   },
 
   {
@@ -208,6 +209,7 @@ const appRouter = createBrowserRouter([
 const App= () =>{
   return (
     <Provider store={store}>
+      <Toaster position="top-right" reverseOrder={false} />
       <RouterProvider router={appRouter} />
     </Provider>
   )

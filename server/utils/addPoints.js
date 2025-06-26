@@ -18,7 +18,6 @@ const addPoints = async (userId, type, points, description ='')=>{
         userPoints.history.push(entry);
         await userPoints.save();
     }
-    console.log('Adding points');
 };
 
 module.exports = addPoints;

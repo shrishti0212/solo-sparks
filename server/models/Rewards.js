@@ -8,20 +8,20 @@ const RewardSchema = new mongoose.Schema({
 
     description: String,
 
-     cost: {
+    cost: {
     type: Number,
     required: true,
     min: 0,
     },
 
-     isAvailable: {
+    isAvailable: {
     type: Boolean,
     default: true,
   },
 
-     type: {
+    type: {
     type: String,
-    enum: ['profile-boost', 'exclusive-content', 'prompt', 'gift'],
+    enum: ['profile-boost', 'exclusive-content','bonus-points', 'prompt', 'gift'],
     required: true,
   }
   

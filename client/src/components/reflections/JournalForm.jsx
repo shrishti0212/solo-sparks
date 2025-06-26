@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import API from '../../api/axios';
+import toast from 'react-hot-toast';
 
 const JournalForm = () => {
   const { id } = useParams();
@@ -27,8 +28,8 @@ const JournalForm = () => {
           if (title) setTitle(title);
           if (notes) setNotes(notes);
           if (image) setImagePreview(image);
-        } catch (err) {
-          console.error('Failed to load journal', err);
+        } catch {
+          toast.error('Failed to load journal');
         }
       };
       fetchJournal();
@@ -39,7 +40,7 @@ const JournalForm = () => {
     e.preventDefault();
 
     if (!title && !notes && !image && !imagePreview) {
-      return alert("Please add a title, notes, or image before submitting.");
+      return toast.error('Please add a title, notes, or image before submitting.');
     }
 
     const formData = new FormData();
@@ -48,20 +49,18 @@ const JournalForm = () => {
     if (notes) formData.append('notes', notes);
     if (image) formData.append('image', image);
 
-    setLoading(true);
-
     try {
+      setLoading(true);
       if (id) {
         await API.put(`/reflections/${id}`, formData);
-        alert('Journal updated!');
+        toast.success('Journal updated!');
       } else {
         await API.post('/reflections', formData);
-        alert('Journal saved!');
+        toast.success('Journal saved!');
       }
       navigate('/dashboard');
     } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.message || 'Submission failed');
+      toast.error(err.response?.data?.message || 'Submission failed');
     } finally {
       setLoading(false);
     }
@@ -78,7 +77,7 @@ const JournalForm = () => {
         <h2 className="text-3xl font-bold italic text-[#5f5796] text-center mb-1">Journal</h2>
         <p className="text-sm text-center font-semibold text-[#474270] mb-10">{today}</p>
 
-        <form onSubmit={handleSubmit} className="space-y-4 ">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
             placeholder="Title (e.g., Morning thoughts)"
@@ -95,14 +94,10 @@ const JournalForm = () => {
             rows={5}
           />
 
-          {/* Show existing image with ❌ */}
+          {/* Image Preview */}
           {imagePreview && (
             <div className="relative w-full max-h-full rounded-xl overflow-hidden">
-              <img
-                src={imagePreview}
-                alt="Preview"
-                className="w-full object-cover rounded-xl"
-              />
+              <img src={imagePreview} alt="Preview" className="w-full object-cover rounded-xl" />
               <button
                 type="button"
                 onClick={handleImageRemove}
@@ -114,7 +109,7 @@ const JournalForm = () => {
             </div>
           )}
 
-          {/* Show upload only if no image */}
+          {/* Image Upload */}
           {!imagePreview && (
             <div className="flex justify-center">
               <label htmlFor="image-upload" className="cursor-pointer">

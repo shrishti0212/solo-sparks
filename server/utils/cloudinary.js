@@ -17,19 +17,10 @@ const imageStorage = new CloudinaryStorage({
   },
 });
 
-// const videoStorage = new CloudinaryStorage({
-//   cloudinary,
-//   params: {
-//     folder: 'solo-sparks/audio',
-//     resource_type: 'auto',
-//   },
-// });
 
 const uploadImage = multer({ storage : imageStorage });
-// const uploadVideo = multer({ storage : videoStorage});
-
 
 
 module.exports = { cloudinary, 
     uploadImage,
-   /* uploadVideo */};
+  };

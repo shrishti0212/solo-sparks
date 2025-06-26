@@ -6,7 +6,8 @@ const {
   getUserReflections,
   updateReflection,
   deleteReflection,
-  getReflectionById
+  getReflectionById,
+  getReflectionByTaskId
 } = require('../controllers/reflectionController');
 
 const authMiddleware = require('../middleware/authMiddleware');
@@ -28,6 +29,9 @@ router.get('/:id', authMiddleware, getReflectionById);
 
 // PUT: Update a reflection by ID
 router.put('/:id', authMiddleware, uploadImage.single('image'), updateReflection);
+
+//
+router.get('/task/:assignedTaskId', authMiddleware, getReflectionByTaskId);
 
 // DELETE: Delete a reflection by ID
 router.delete('/:id', authMiddleware, deleteReflection);

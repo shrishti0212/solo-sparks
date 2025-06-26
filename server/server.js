@@ -5,11 +5,7 @@ const connectDB = require("./db/connect");
 
 const authRouter = require('./routes/authRoutes');
 
-// const questRouter = require('./routes/questRoutes');
-
 const reflectionRouter = require('./routes/reflectionRoutes');
-
-const moodRouter = require('./routes/moodRoutes');
 
 const sparkPointsRouter = require('./routes/sparkPointsRoutes');
 
@@ -17,7 +13,9 @@ const rewardRouter = require('./routes/rewardRoutes');
 
 const userProfileRouter = require('./routes/userProfileRoutes');
 
-const dailyTaskRouter = require('./routes/dailyTask');
+const promptRouter = require('./routes/promptsRoutes');
+
+const assignedTaskRouter = require('./routes/assignedTasksRoute')
 
 const app = express();
 
@@ -60,17 +58,15 @@ app.get("/", (req, res) => {
 
 //Routes
 app.use('/auth',authRouter);
-// app.use('/quests', questRouter);
 app.use('/reflections', reflectionRouter);
-app.use('/moods', moodRouter);
 app.use('/spark-points',sparkPointsRouter);
 app.use('/rewards', rewardRouter);
 app.use('/user-profile',userProfileRouter);
-app.use('/tasks',dailyTaskRouter);
+app.use('/prompts',promptRouter);
+app.use('/assignedTask',assignedTaskRouter)
 
 const start = async () => {
   try {
-    console.log("ENV MONGO_URL:", process.env.MONGO_URL);
     await connectDB(process.env.MONGO_URL); 
     app.listen(PORT, () => {
       console.log(`Server is running on http://localhost:${PORT}`);

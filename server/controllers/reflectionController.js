@@ -1,12 +1,14 @@
 const Reflection = require('../models/Reflection');
-const DailyTask = require('../models/DailyTask');
+const AssignedTask = require('../models/AssignedTask');
 const addPoints = require('../utils/addPoints');
 
+// -------------------------- Submit Reflection --------------------------
 const submitReflection = async (req, res) => {
   try {
     const { type, title, notes, mood } = req.body;
     const imageUrl = req.file ? req.file.path : null;
     const userId = req.user.userId;
+    const assignedTaskId = req.body.assignedTaskId || null;
 
     const validTypes = ['daily-reflection', 'daily-challenge', 'mood', 'journal', 'photo'];
     if (!type || !validTypes.includes(type)) {
@@ -14,60 +16,99 @@ const submitReflection = async (req, res) => {
     }
 
     const today = new Date().toISOString().slice(0, 10);
-    
-    let task = null;
-    if (type === 'daily-reflection' || type === 'daily-challenge') {
-      task = await DailyTask.findOne({ userId, date: today });
-    if (!task) {
-      return res.status(403).json({ message: 'No task assigned for today' });
-  }
-}
-
-
-    const reflection = await Reflection.create({
-      userId,
-      type,
-      title,
-      notes,
-      mood,
-      image: imageUrl,
-    });
-
+    let assignedTask = null;
     let points = 0;
     let description = '';
 
-    if (type === 'daily-reflection' && !task.isReflectionCompleted) {
-      points = 15;
-      description = 'Completed daily reflection task';
-      task.isReflectionCompleted = true;
+    // Validate assigned task if needed
+    if (type === 'daily-reflection' || type === 'daily-challenge') {
+      if (!assignedTaskId) {
+        return res.status(400).json({ message: 'assignedTaskId is required for task reflections' });
+      }
+
+      assignedTask = await AssignedTask.findOne({
+        _id: assignedTaskId,
+        userId,
+        type,
+        date: today,
+      });
+
+      if (!assignedTask) {
+        return res.status(403).json({ message: 'No task assigned for today' });
+      }
+
+      const alreadySubmitted = await Reflection.findOne({ userId, assignedTaskId });
+      if (alreadySubmitted) {
+        return res.status(400).json({ message: 'Task already completed' });
+      }
+
+      if (type === 'daily-reflection') {
+        points = 15;
+        description = 'Completed daily reflection task';
+      } else if (type === 'daily-challenge') {
+        points = 20;
+        description = 'Completed daily challenge task';
+      }
     }
 
-    if (type === 'daily-challenge' && !task.isChallengeCompleted) {
-      points = 20;
-      description = 'Completed daily challenge task';
-      task.isChallengeCompleted = true;
+    // Mood parsing
+    let parsedMood = mood;
+    if (typeof mood === 'string') {
+      try {
+        parsedMood = JSON.parse(mood);
+      } catch (err) {
+        return res.status(400).json({ message: 'Invalid mood format' });
+      }
     }
 
-    if (points > 0) {
-      await task.save();
-      await addPoints(userId, type, points, description);
+    // Validation
+    if (type === 'daily-reflection' && (!title || !notes)) {
+      return res.status(400).json({ message: 'Title and notes are required for daily reflection' });
+    }
+
+    if (type === 'daily-challenge' && !imageUrl) {
+      return res.status(400).json({ message: 'Image is required for daily challenge' });
+    }
+
+    if (type === 'journal' && (!title || !notes)) {
+      return res.status(400).json({ message: 'Title and notes are required for journal' });
+    }
+
+    if (type === 'mood' && (!parsedMood?.label || !parsedMood?.emoji)) {
+      return res.status(400).json({ message: 'Mood data is required for mood reflection' });
     }
 
     if (type === 'photo' && !imageUrl) {
-      return res.status(400).json({ message: 'Photo reflection must include an image' });
+      return res.status(400).json({ message: 'Image is required for photo reflection' });
+    }
+
+    // Create reflection
+    const reflection = await Reflection.create({
+      userId,
+      type,
+      title: title || '',
+      notes: notes || '',
+      mood: parsedMood,
+      image: imageUrl,
+      assignedTaskId,
+    });
+
+    if (points > 0) {
+      await addPoints(userId, type, points, description);
     }
 
     res.status(201).json({
-      message: `${type} reflection submitted`,
+      message: `${type} reflection submitted successfully`,
       reflection,
       pointsEarned: points,
-      taskUpdated: !!points,
     });
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
 
+
+// -------------------------- Get All Reflections --------------------------
 const getUserReflections = async (req, res) => {
   try {
     const { type, date } = req.query;
@@ -89,12 +130,23 @@ const getUserReflections = async (req, res) => {
   }
 };
 
+
+// -------------------------- Update Reflection --------------------------
 const updateReflection = async (req, res) => {
   try {
     const reflectionId = req.params.id;
     const userId = req.user.userId;
-    const { title, notes, mood } = req.body;
+    const { title, notes } = req.body;
     const imageUrl = req.file ? req.file.path : null;
+
+    let mood = req.body.mood;
+    if (typeof mood === 'string') {
+      try {
+        mood = JSON.parse(mood);
+      } catch (e) {
+        return res.status(400).json({ message: 'Invalid mood format' });
+      }
+    }
 
     const reflection = await Reflection.findById(reflectionId);
     if (!reflection) {
@@ -117,27 +169,33 @@ const updateReflection = async (req, res) => {
   }
 };
 
+
+// -------------------------- Delete Reflection --------------------------
 const deleteReflection = async (req, res) => {
   try {
-    const reflectionId = req.params.id;
-    const userId = req.user.userId;
+    const reflection = await Reflection.findById(req.params.id);
 
-    const reflection = await Reflection.findById(reflectionId);
     if (!reflection) {
+      console.log('Reflection not found with ID:', req.params.id);
       return res.status(404).json({ message: 'Reflection not found' });
     }
 
-    if (reflection.userId.toString() !== userId) {
-      return res.status(403).json({ message: 'Not authorized to delete this reflection' });
+    // ✅ FIXED: Correct user ownership check
+    if (String(reflection.userId) !== String(req.user.userId)) {
+      console.log('User not authorized to delete this reflection.');
+      return res.status(403).json({ message: 'Not allowed to delete' });
     }
 
-    await Reflection.findByIdAndDelete(reflectionId);
-    res.status(200).json({ message: 'Reflection deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Internal server error', error: error.message });
+    await reflection.deleteOne();
+    res.json({ message: 'Deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting reflection:', err);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
+
+// -------------------------- Get Reflection by ID --------------------------
 const getReflectionById = async (req, res) => {
   try {
     const reflectionId = req.params.id;
@@ -158,10 +216,32 @@ const getReflectionById = async (req, res) => {
   }
 };
 
+
+// -------------------------- Get Reflection by Assigned Task ID --------------------------
+const getReflectionByTaskId = async (req, res) => {
+  try {
+    const reflection = await Reflection.findOne({
+      assignedTaskId: req.params.assignedTaskId,
+      userId: req.user.userId,
+    });
+
+    if (!reflection) {
+      return res.status(404).json({ message: 'No reflection found for this task' });
+    }
+
+    res.json(reflection);
+  } catch (err) {
+    console.error('Error fetching reflection by task ID:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
 module.exports = {
   submitReflection,
   getUserReflections,
   updateReflection,
   deleteReflection,
-  getReflectionById
+  getReflectionById,
+  getReflectionByTaskId,
 };
