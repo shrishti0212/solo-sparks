@@ -65,14 +65,23 @@ const Navbar = () => {
         Profile
       </NavLink>
 
-      {currentUser && (
-        <button
-          onClick={handleLogout}
-          className="ml-2 px-3 py-1 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition text-sm"
-        >
-          Logout
-        </button>
-      )}
+      {currentUser ? (
+  <button
+    onClick={handleLogout}
+    className="ml-2 px-3 py-1 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition text-sm"
+  >
+    Logout
+  </button>
+) : (
+  <NavLink
+    to="/login"
+    onClick={() => setIsOpen(false)}
+    className="ml-2 px-3 py-1 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition text-sm"
+  >
+    Login
+  </NavLink>
+)}
+
     </>
   );
 
