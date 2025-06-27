@@ -53,7 +53,7 @@ const Home = () => {
       const existing = res.data;
 
       if (existing && existing._id) {
-        // If reflection already exists → go to edit page
+        // If reflection already exists - go to edit page
         if (type === 'daily-challenge') {
           navigate(`/reflection/challenge/${existing._id}`, {
             state: { assignedTaskId, title, content },
