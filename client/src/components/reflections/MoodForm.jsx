@@ -69,7 +69,7 @@ const MoodForm = () => {
   };
 
   return (
-    <div className="min-h-screen px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#8589EB] to-[#A3ABFF] px-4 py-8 text-white">
       <div className="max-w-xl mx-auto text-purple-800 p-1">
         <h2 className="text-3xl font-bold italic text-[#5f5796] text-center mb-1">
           Hey{user?.username ? `, ${user.username}` : ''}! How are you feeling today?
@@ -77,7 +77,6 @@ const MoodForm = () => {
         <p className="text-sm text-center font-semibold text-[#474270] mb-10">{today}</p>
 
         <form onSubmit={handleSubmit}>
-          {/* Mood Slider */}
           <div className="w-full mb-4">
             <input
               type="range"
@@ -93,7 +92,6 @@ const MoodForm = () => {
             </div>
           </div>
 
-          {/* Submit */}
           <button
             type="submit"
             disabled={loading}

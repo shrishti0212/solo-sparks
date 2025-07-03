@@ -33,7 +33,7 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-[#F3F4F8] p-6">
       <motion.div
-        className="bg-gradient-to-br from-[#8576FF] to-[#B8B5FF] rounded-3xl text-white p-6 shadow-md"
+        className="bg-gradient-to-br from-[#8589EB] to-[#A3ABFF] rounded-3xl text-white p-6 shadow-md"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4 }}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
+import { BsFillTrashFill } from 'react-icons/bs';
 
 const PhotoForm = () => {
   const { id } = useParams();
@@ -79,34 +80,26 @@ const PhotoForm = () => {
   };
 
   return (
-    <div className="min-h-screen px-6 py-8 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-[#8589EB] to-[#A3ABFF] px-6 py-8 text-white">
       <div className="max-w-xl mx-auto text-purple-800 p-1">
-        <h2 className="text-3xl font-bold italic text-[#5f5796] text-center mb-1">
-          Photo Reflection
-        </h2>
+        <h2 className="text-3xl font-bold italic text-[#5f5796] text-center mb-1">Photo Reflection</h2>
         <p className="text-sm text-center font-semibold text-[#474270] mb-10">{today}</p>
 
         <form onSubmit={handleSubmit} className="space-y-12">
-          {/* Image Preview with delete button */}
           {imagePreview && (
             <div className="relative w-full h-full rounded-xl overflow-hidden">
-              <img
-                src={imagePreview}
-                alt="Uploaded"
-                className="w-full max-h-full object-cover rounded-xl"
-              />
+              <img src={imagePreview} alt="Uploaded" className="w-full max-h-full object-cover rounded-xl" />
               <button
                 type="button"
-                onClick={handleDelete}
-                className="absolute top-2 right-2 bg-black bg-opacity-50 text-white rounded-full p-1 px-[6px] text-xs hover:bg-opacity-70"
-                title="Delete reflection"
+                onClick={id ? handleDelete : handleImageRemove}
+                className="absolute top-2 right-2 bg-purple-100 text-purple-700 hover:bg-purple-200 p-2 rounded-full shadow-sm hover:scale-105 transition"
+                title={id ? 'Delete from server' : 'Remove preview'}
               >
-                ❌
+                <BsFillTrashFill className="text-sm" />
               </button>
             </div>
           )}
 
-          {/* Upload section if no image */}
           {!imagePreview && (
             <div className="flex justify-center">
               <label htmlFor="image-upload" className="cursor-pointer">
@@ -132,7 +125,6 @@ const PhotoForm = () => {
             </div>
           )}
 
-          {/* Submit button */}
           {(image || !id) && (
             <button
               type="submit"

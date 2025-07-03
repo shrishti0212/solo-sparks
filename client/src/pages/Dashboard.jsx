@@ -10,11 +10,7 @@ import { motion } from 'framer-motion';
 const Dashboard = () => {
   const currentUser = useSelector((state) => state.user.currentUser);
   const [reflectionsByDate, setReflectionsByDate] = useState({});
-  const [summary, setSummary] = useState({
-    reflections: 0,
-    mood: 0,
-    photos: 0,
-  });
+  const [summary, setSummary] = useState({ reflections: 0, mood: 0, photos: 0 });
   const [lastUpdated, setLastUpdated] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -29,51 +25,36 @@ const Dashboard = () => {
           return;
         }
 
-        const groupedReflections = {};
+        const grouped = {};
         let total = 0;
         let moodCount = 0;
         let photoCount = 0;
 
         reflections.forEach((item) => {
           const dateKey = format(new Date(item.createdAt), 'yyyy-MM-dd');
-          if (!groupedReflections[dateKey]) {
-            groupedReflections[dateKey] = [];
-          }
-          groupedReflections[dateKey].push(item);
-
+          if (!grouped[dateKey]) grouped[dateKey] = [];
+          grouped[dateKey].push(item);
           total++;
           if (item.type === 'mood') moodCount++;
           if (item.image) photoCount++;
         });
 
-        setReflectionsByDate(groupedReflections);
-        setSummary({
-          reflections: total,
-          mood: moodCount,
-          photos: photoCount,
-        });
-
+        setReflectionsByDate(grouped);
+        setSummary({ reflections: total, mood: moodCount, photos: photoCount });
         setLastUpdated(new Date());
 
-        if (total === 0) {
-          toast('No reflections found. Start your first one today! 🌟');
-        }
-      } catch (error) {
+        if (total === 0) toast('No reflections found. Start your first one today! 🌟');
+      } catch {
         toast.error('Failed to fetch reflections.');
-        console.error('Error fetching reflections:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    if (currentUser) {
-      fetchReflections();
-    }
+    if (currentUser) fetchReflections();
   }, [currentUser]);
 
-  const sortedDates = Object.keys(reflectionsByDate).sort(
-    (a, b) => new Date(b) - new Date(a)
-  );
+  const sortedDates = Object.keys(reflectionsByDate).sort((a, b) => new Date(b) - new Date(a));
 
   if (!currentUser) {
     return (
@@ -86,11 +67,10 @@ const Dashboard = () => {
   return (
     <div className="px-3 sm:px-4 md:px-8 lg:px-16 xl:px-32 py-5">
       <div className="max-w-screen-sm sm:max-w-screen-md mx-auto">
-        <h1 className="text-center sm:text-2xl text-6xl italic font-bold text-white opacity-20 pt-2 ">
+        <h1 className="text-center sm:text-3xl md:text-6xl italic font-bold text-white opacity-20 pt-2">
           Your Entries
         </h1>
 
-        {/* Summary */}
         <div className="bg-white rounded-xl px-6 py-6 shadow-md mb-3 flex flex-wrap justify-around gap-y-4 items-center">
           <div className="text-center">
             <p className="text-2xl font-bold text-gray-700">{summary.reflections}</p>
@@ -106,14 +86,12 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Last updated */}
         {lastUpdated && (
           <p className="text-xs text-center text-purple-200 italic mb-6">
             Last updated: {format(lastUpdated, 'PPPpp')}
           </p>
         )}
 
-        {/* Content */}
         {loading ? (
           <Loader message="Fetching your reflections..." />
         ) : sortedDates.length === 0 ? (
@@ -130,7 +108,6 @@ const Dashboard = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
             >
-              {/* Date Header */}
               <div className="flex items-center gap-4 mb-3">
                 <div className="bg-gray-200 text-center rounded-xl px-3 py-2 w-16">
                   <p className="text-xl font-bold text-[#585791]">
@@ -150,7 +127,6 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Cards for this date */}
               {reflectionsByDate[date].map((item) => (
                 <motion.div
                   key={item._id}
@@ -165,9 +141,7 @@ const Dashboard = () => {
                       setReflectionsByDate((prev) => {
                         const updated = { ...prev };
                         updated[date] = updated[date].filter((r) => r._id !== deletedId);
-                        if (updated[date].length === 0) {
-                          delete updated[date];
-                        }
+                        if (updated[date].length === 0) delete updated[date];
                         return updated;
                       });
 

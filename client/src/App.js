@@ -10,7 +10,6 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Rewards from "./pages/Rewards";
 
-//import UploadAudioReflection from "./components/UploadAudioReflection";
 import ProtectedRoute from "./components/ProtectedRoute";
 import DailyChallengeForm from "./components/reflections/DailyChallengeForm";
 import DailyReflectionForm from "./components/reflections/DailyReflectionForm";
@@ -19,15 +18,25 @@ import MoodForm from "./components/reflections/MoodForm";
 import PhotoForm from "./components/reflections/PhotoForm";
 import TaskPage from "./pages/TaskPage";
 import AuthForm from "./pages/AuthForm";
+import Splash from "./pages/Splash";
 
 const appRouter = createBrowserRouter([
   {
     path:'/',
+    element:(
+      <Splash/>
+    )
+  },
+
+  {
+    path:'/home',
     element: (
+      <ProtectedRoute>
       <>
         <Navbar/>
         <Home/>
       </>
+      </ProtectedRoute>
     ),
   },
 
@@ -198,8 +207,6 @@ const appRouter = createBrowserRouter([
     </ProtectedRoute>
   )
 },
-
-
 
 
 ])

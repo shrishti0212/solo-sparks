@@ -6,7 +6,8 @@
   body {
     font-family: 'Nunito', sans-serif;
     font-weight: 400;
-    @apply bg-gradient-to-br from-[#8576FF] to-[#B8B5FF] min-h-screen;
+    @apply bg-gradient-to-br from-[#8589EB] to-[#A3ABFF]
+ min-h-screen;
   }
 
   h1, h2, .title {

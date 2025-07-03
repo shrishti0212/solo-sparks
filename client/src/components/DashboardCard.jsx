@@ -3,6 +3,13 @@ import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import API from '../api/axios';
 import toast from 'react-hot-toast';
+import {
+  LuBrain,
+  LuMountain,
+  LuCamera,
+  LuBookOpenCheck,
+} from 'react-icons/lu';
+import { BsFillTrashFill } from 'react-icons/bs';
 
 const DashboardCard = ({
   _id,
@@ -12,16 +19,16 @@ const DashboardCard = ({
   createdAt,
   assignedTaskId,
   onDelete,
-  promptContent, // ✅ content from prompt if available
+  promptContent,
 }) => {
   const navigate = useNavigate();
   const time = format(new Date(createdAt), 'p');
 
   const ICONS = {
-    'daily-reflection': '🧠',
-    'daily-challenge': '🏔️',
-    photo: '📸',
-    journal: '📓',
+    'daily-reflection': <LuBrain className="text-lg" />,
+    'daily-challenge': <LuMountain className="text-lg" />,
+    photo: <LuCamera className="text-lg" />,
+    journal: <LuBookOpenCheck className="text-lg" />,
   };
 
   const TITLES = {
@@ -77,10 +84,10 @@ const DashboardCard = ({
     >
       <button
         onClick={handleDelete}
-        className="absolute top-2 right-2 bg-red-100 text-red-600 hover:bg-red-200 px-2 py-1 text-xs rounded-full z-10"
+        className="absolute top-2 right-2 bg-purple-100 text-purple-700 hover:bg-purple-200 p-2 rounded-full shadow-sm hover:scale-105 transition z-10"
         title="Delete"
       >
-        ❌
+        <BsFillTrashFill className="text-sm" />
       </button>
 
       {type === 'mood' ? (
@@ -94,7 +101,7 @@ const DashboardCard = ({
       ) : (
         <>
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-9 h-9 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center font-bold text-lg">
+            <div className="w-9 h-9 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center font-bold">
               {ICONS[type] || ''}
             </div>
             <div>
@@ -103,9 +110,7 @@ const DashboardCard = ({
             </div>
           </div>
 
-          {notes && (
-            <p className="text-gray-800 mb-2 text-sm whitespace-pre-line">{notes}</p>
-          )}
+          {notes && <p className="text-gray-800 mb-2 text-sm whitespace-pre-line">{notes}</p>}
 
           {image && (
             <img

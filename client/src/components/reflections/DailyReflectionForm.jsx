@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import API from '../../api/axios';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
-import { X } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { BsFillTrashFill } from 'react-icons/bs';
 
 const DailyReflectionForm = () => {
   const { id } = useParams();
@@ -68,7 +68,7 @@ const DailyReflectionForm = () => {
   };
 
   return (
-    <div className="min-h-screen px-6 py-8 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-[#8589EB] to-[#A3ABFF] px-6 py-8 text-white">
       <div className="max-w-xl mx-auto text-purple-800 p-1">
         <h2 className="text-3xl font-bold italic text-[#5f5796] text-center mb-1">{promptTitle}</h2>
         <p className="text-sm text-center font-semibold text-[#474270] mb-10">{today}</p>
@@ -112,9 +112,10 @@ const DailyReflectionForm = () => {
               <button
                 type="button"
                 onClick={handleImageRemove}
-                className="absolute top-2 right-2 bg-white text-purple-700 rounded-full p-1 hover:bg-red-100"
+                className="absolute top-2 right-2 bg-purple-100 text-purple-700 hover:bg-purple-200 p-2 rounded-full shadow-sm hover:scale-105 transition"
+                title="Remove photo"
               >
-                <X size={18} />
+                <BsFillTrashFill className="text-sm" />
               </button>
             </div>
           )}

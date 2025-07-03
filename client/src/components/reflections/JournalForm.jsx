@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import API from '../../api/axios';
 import toast from 'react-hot-toast';
+import { BsFillTrashFill } from 'react-icons/bs';
 
 const JournalForm = () => {
   const { id } = useParams();
@@ -72,7 +73,7 @@ const JournalForm = () => {
   };
 
   return (
-    <div className="min-h-screen px-6 py-8 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-[#8589EB] to-[#A3ABFF] px-6 py-8 text-white">
       <div className="max-w-xl mx-auto text-purple-800 p-1">
         <h2 className="text-3xl font-bold italic text-[#5f5796] text-center mb-1">Journal</h2>
         <p className="text-sm text-center font-semibold text-[#474270] mb-10">{today}</p>
@@ -83,40 +84,36 @@ const JournalForm = () => {
             placeholder="Title (e.g., Morning thoughts)"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full p-3 border rounded bg-white opacity-20"
+            className="w-full p-3 rounded-xl bg-white bg-opacity-20 text-white placeholder-white/70 focus:outline-none"
           />
 
           <textarea
             placeholder="Write your journal entry..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="w-full p-3 border rounded bg-white opacity-20"
+            className="w-full p-3 rounded-xl bg-white bg-opacity-20 text-white placeholder-white/70 focus:outline-none"
             rows={5}
           />
 
-          {/* Image Preview */}
           {imagePreview && (
             <div className="relative w-full max-h-full rounded-xl overflow-hidden">
               <img src={imagePreview} alt="Preview" className="w-full object-cover rounded-xl" />
               <button
                 type="button"
                 onClick={handleImageRemove}
-                className="absolute top-2 right-2 bg-black bg-opacity-50 text-white rounded-full p-1 px-[6px] text-xs hover:bg-opacity-70"
+                className="absolute top-2 right-2 bg-purple-100 text-purple-700 hover:bg-purple-200 p-2 rounded-full shadow-sm hover:scale-105 transition"
                 title="Remove photo"
               >
-                ❌
+                <BsFillTrashFill className="text-sm" />
               </button>
             </div>
           )}
 
-          {/* Image Upload */}
           {!imagePreview && (
             <div className="flex justify-center">
               <label htmlFor="image-upload" className="cursor-pointer">
-                <div className="flex flex-col items-center space-y-2">
-                  <div className="bg-white bg-opacity-20 px-6 py-3 rounded-lg hover:opacity-80">
-                    <span className="text-purple-800 font-semibold">📷 Add Photo</span>
-                  </div>
+                <div className="bg-white bg-opacity-20 px-6 py-3 rounded-lg hover:opacity-80">
+                  <span className="text-purple-800 font-semibold">📷 Add Photo</span>
                 </div>
               </label>
               <input

@@ -1,4 +1,3 @@
-// client/pages/AuthForm.jsx
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../api/axios";
@@ -10,22 +9,14 @@ import toast from "react-hot-toast";
 const AuthForm = () => {
   const location = useLocation();
   const isRegister = location.pathname === "/register";
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
 
   const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e) => {
@@ -35,15 +26,8 @@ const AuthForm = () => {
     try {
       const url = isRegister ? "/auth/register" : "/auth/login";
       const payload = isRegister
-        ? {
-            name: formData.name,
-            email: formData.email,
-            password: formData.password,
-          }
-        : {
-            email: formData.email,
-            password: formData.password,
-          };
+        ? { name: formData.name, email: formData.email, password: formData.password }
+        : { email: formData.email, password: formData.password };
 
       const res = await axios.post(url, payload);
 
@@ -51,11 +35,12 @@ const AuthForm = () => {
       localStorage.setItem("token", res.data.token);
 
       toast.success(`${isRegister ? "Registered" : "Logged in"} successfully`);
-      navigate("/");
+      navigate("/home");
     } catch (err) {
-    const errorMsg = err.response?.data?.message || "Something went wrong";
-    toast.error(errorMsg);
-    setError(errorMsg);    }
+      const errorMsg = err.response?.data?.message || "Something went wrong";
+      toast.error(errorMsg);
+      setError(errorMsg);
+    }
   };
 
   const handleToggle = () => {
@@ -63,9 +48,9 @@ const AuthForm = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#8576FF] to-[#B8B5FF] px-6">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#808AFF] to-[#9BA3FF] px-6">
       <motion.h2
-        className="text-6xl font-bold mb-16 text-center text-[#8474ff]"
+        className="text-6xl font-bold mb-16 text-center text-[#B4BAFF]"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -88,7 +73,7 @@ const AuthForm = () => {
             value={formData.name}
             onChange={handleChange}
             required
-            className="w-full bg-white bg-opacity-20 px-5 py-4 rounded-lg font-semibold text-lg text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+            className="w-full bg-white bg-opacity-20 px-5 py-4 rounded-full font-semibold text-lg text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
           />
         )}
 
@@ -99,7 +84,7 @@ const AuthForm = () => {
           value={formData.email}
           onChange={handleChange}
           required
-          className="w-full bg-white bg-opacity-20 px-5 py-4 rounded-lg font-semibold text-lg text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+          className="w-full bg-white bg-opacity-20 px-5 py-4 rounded-full font-semibold text-lg text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
         />
 
         <input
@@ -109,14 +94,14 @@ const AuthForm = () => {
           value={formData.password}
           onChange={handleChange}
           required
-          className="w-full bg-white bg-opacity-20 px-5 py-4 rounded-lg font-semibold text-lg text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+          className="w-full bg-white bg-opacity-20 px-5 py-4 rounded-full font-semibold text-lg text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
         />
 
         {error && <p className="text-red-200 text-sm">{error}</p>}
 
         <button
           type="submit"
-          className="w-full bg-white/90 py-4 rounded-lg text-xl text-[#8474ff] font-bold hover:bg-opacity-75 transition"
+          className="w-full bg-white/90 py-4 rounded-full text-xl text-[#8474ff] font-bold hover:bg-opacity-75 transition"
         >
           {isRegister ? "Sign Up" : "Login"}
         </button>
@@ -125,7 +110,7 @@ const AuthForm = () => {
           {isRegister ? "Already have an account?" : "Don't have an account?"}{" "}
           <span
             onClick={handleToggle}
-            className="text-[#fff] underline font-semibold cursor-pointer"
+            className="text-white underline font-semibold cursor-pointer"
           >
             {isRegister ? "Login" : "Register"}
           </span>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import API from '../../api/axios';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { X } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { BsFillTrashFill } from 'react-icons/bs';
 
 const DailyChallengeForm = () => {
   const navigate = useNavigate();
@@ -65,13 +65,22 @@ const DailyChallengeForm = () => {
   };
 
   return (
-    <div className="min-h-screen px-6 py-8 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-[#8589EB] to-[#A3ABFF] px-6 py-8 text-white">
       <div className="max-w-xl mx-auto text-purple-800 p-1">
         <h2 className="text-3xl font-bold italic text-[#5f5796] text-center mb-1">{promptTitle}</h2>
         <p className="text-sm text-center font-semibold text-[#474270] mb-10">{today}</p>
         <p className="italic text-white font-semibold text-lg mb-4">{promptContent}</p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          <textarea
+            placeholder="Write your thoughts..."
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            rows={3}
+            className="w-full p-4 rounded-xl resize-none bg-white bg-opacity-20 text-white placeholder-white/70 focus:outline-none"
+            required
+          />
+
           {!imagePreview && (
             <div className="flex justify-center">
               <label htmlFor="image-upload" className="cursor-pointer">
@@ -101,9 +110,10 @@ const DailyChallengeForm = () => {
                   setImage(null);
                   setImagePreview(null);
                 }}
-                className="absolute top-2 right-2 bg-white bg-opacity-70 text-purple-800 rounded-full p-1 hover:bg-opacity-100"
+                className="absolute top-2 right-2 bg-purple-100 text-purple-700 hover:bg-purple-200 p-2 rounded-full shadow-sm hover:scale-105 transition"
+                title="Remove photo"
               >
-                <X size={18} />
+                <BsFillTrashFill className="text-sm" />
               </button>
             </div>
           )}

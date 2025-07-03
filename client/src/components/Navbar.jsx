@@ -15,116 +15,71 @@ const Navbar = () => {
   const handleLogout = () => {
     dispatch(logoutUser());
     navigate("/login");
-    setIsOpen(false); // Close menu on logout
+    setIsOpen(false);
   };
+
+  const navLinkClass = ({ isActive }) =>
+    isActive
+      ? "text-[#5f5796] font-semibold border-b-2 border-[#5f5796] pb-1"
+      : "text-gray-600 hover:text-[#5f5796] transition";
 
   const navLinks = (
     <>
-      <NavLink
-        to="/"
-        onClick={() => setIsOpen(false)}
-        className={({ isActive }) =>
-          isActive
-            ? "text-purple-700 border-b-2 border-purple-700 pb-1"
-            : "text-gray-700 hover:text-purple-700"
-        }
-      >
+      <NavLink to="/home" onClick={() => setIsOpen(false)} className={navLinkClass}>
         Home
       </NavLink>
-      <NavLink
-        to="/dashboard"
-        onClick={() => setIsOpen(false)}
-        className={({ isActive }) =>
-          isActive
-            ? "text-purple-700 border-b-2 border-purple-700 pb-1"
-            : "text-gray-700 hover:text-purple-700"
-        }
-      >
+      <NavLink to="/dashboard" onClick={() => setIsOpen(false)} className={navLinkClass}>
         Dashboard
       </NavLink>
-      <NavLink
-        to="/rewards"
-        onClick={() => setIsOpen(false)}
-        className={({ isActive }) =>
-          isActive
-            ? "text-purple-700 border-b-2 border-purple-700 pb-1"
-            : "text-gray-700 hover:text-purple-700"
-        }
-      >
+      <NavLink to="/rewards" onClick={() => setIsOpen(false)} className={navLinkClass}>
         Rewards
       </NavLink>
-      <NavLink
-        to="/profile"
-        onClick={() => setIsOpen(false)}
-        className={({ isActive }) =>
-          isActive
-            ? "text-purple-700 border-b-2 border-purple-700 pb-1"
-            : "text-gray-700 hover:text-purple-700"
-        }
-      >
+      <NavLink to="/profile" onClick={() => setIsOpen(false)} className={navLinkClass}>
         Profile
       </NavLink>
-
       {currentUser ? (
-  <button
-    onClick={handleLogout}
-    className="ml-2 px-3 py-1 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition text-sm"
-  >
-    Logout
-  </button>
-) : (
-  <NavLink
-    to="/login"
-    onClick={() => setIsOpen(false)}
-    className="ml-2 px-3 py-1 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition text-sm"
-  >
-    Login
-  </NavLink>
-)}
-
+        <button
+          onClick={handleLogout}
+          className="ml-2 px-4 py-1.5 bg-[#8576FF] text-white rounded-md hover:bg-[#6f60db] transition text-sm"
+        >
+          Logout
+        </button>
+      ) : (
+        <NavLink
+          to="/login"
+          onClick={() => setIsOpen(false)}
+          className="ml-2 px-4 py-1.5 bg-[#8576FF] text-white rounded-md hover:bg-[#6f60db] transition text-sm"
+        >
+          Login
+        </NavLink>
+      )}
     </>
   );
 
   return (
     <nav className="w-full bg-white text-gray-800 px-4 sm:px-6 py-4 shadow-md">
       <div className="max-w-6xl mx-auto flex justify-between items-center h-16">
-        {/* Logo Only */}
         <div>
-          <img
-            src={logo}
-            alt="Logo"
-            className="h-16 w-auto object-contain" // Larger logo
-          />
+          <img src={logo} alt="Logo" className="h-14 w-auto object-contain" />
         </div>
-
-        {/* Desktop Links */}
         <div className="hidden sm:flex gap-6 items-center text-sm sm:text-base font-medium">
           {navLinks}
         </div>
-
-        {/* Mobile Hamburger */}
         <div className="sm:hidden">
           <button onClick={() => setIsOpen(true)}>
-            <HiOutlineMenu className="text-3xl" />
+            <HiOutlineMenu className="text-3xl text-[#5f5796]" />
           </button>
         </div>
       </div>
-
-      {/* Mobile Popover */}
-      <Dialog
-        open={isOpen}
-        onClose={() => setIsOpen(false)}
-        className="relative z-50 sm:hidden"
-      >
-        <div className="fixed inset-0 bg-black/50" aria-hidden="true" />
+      <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50 sm:hidden">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" aria-hidden="true" />
         <div className="fixed top-0 right-0 w-64 h-full bg-white shadow-xl p-5">
           <div className="flex justify-between items-center mb-6">
             <img src={logo} alt="Logo" className="w-12 h-12 object-contain" />
             <button onClick={() => setIsOpen(false)}>
-              <HiOutlineX className="text-2xl" />
+              <HiOutlineX className="text-2xl text-gray-700" />
             </button>
           </div>
-
           <div className="flex flex-col gap-4 text-base font-medium">
             {navLinks}
           </div>
